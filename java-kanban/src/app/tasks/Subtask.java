@@ -1,7 +1,7 @@
 package app.tasks;
 
 public class Subtask extends Task {
-    Integer epicId;
+    private Epic epic;
 
     public Subtask(Integer id, String name, String description) {
         super(id, name, description);
@@ -12,12 +12,21 @@ public class Subtask extends Task {
         super(name, description);
     }
 
-    public Integer getEpicId() {
-        return epicId;
+    public Epic getEpic() {
+        return epic;
     }
 
-    public void setEpicId(Integer epicId) {
-        this.epicId = epicId;
+    public void setEpic(Epic epic) {
+        this.epic = epic;
+        //this.epic.setStatus();
     }
+
+    @Override
+    public void setStatus(StatusTasks status)
+    {
+        super.setStatus(status);
+        //this.getEpic().setStatus();
+    }
+
 
 }

@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class Task {
     private Integer id;
-    String name;
-    String description;
-    StatusTasks status;
+    private String name;
+    private String description;
+    private StatusTasks status = StatusTasks.NEW;
 
     public Task(String name, String description) {
         this.name = name;
@@ -70,7 +70,7 @@ public class Task {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", status=" + status +
+                ", status=" + this.getStatus() +
                 '}';
     }
 }
