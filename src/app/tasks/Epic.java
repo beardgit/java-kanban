@@ -3,71 +3,70 @@ package app.tasks;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-   private ArrayList<Subtask> subtasks = new ArrayList<>();
+    private ArrayList<Subtask> listSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
     }
 
-    public ArrayList<Subtask> getSubtasks() {
-        return subtasks;
+    public ArrayList<Subtask> getListSubtasks() {
+        return listSubtasks;
     }
 
     public boolean addSubtask(Subtask subtask) {
-        return subtasks.add(subtask);
+        return listSubtasks.add(subtask);
     }
 
     public boolean removeSubtask(int id) {
-        if (!subtasks.isEmpty()) {
-            for (Subtask subtask : subtasks) {
+        Subtask subtaskToDelete = null;
+        if (!listSubtasks.isEmpty()) {
+            for (Subtask subtask : listSubtasks) {
                 int idSubtask = subtask.getId();
                 if (idSubtask == id) {
-                    subtasks.remove(subtask);
-                    return true;
+                    subtaskToDelete = subtask;
+                    break;
                 }
+            }
+            if (subtaskToDelete != null) {
+                listSubtasks.remove(subtaskToDelete);
+                return true;
             }
             return false;
         }
         return false;
     }
 
-    public boolean clearSubtask (){
-       subtasks.clear();
-       if(!subtasks.isEmpty()){
-           return false;
-       }else {
-           return true;
-       }
+    public boolean clearSubtasks() {
+        if (listSubtasks.isEmpty()) {
+            return false;
+        } else {
+            listSubtasks.clear();
+            return true;
+        }
     }
 
     @Override
-    public StatusTasks getStatus()
-    {
-        if (this.getSubtasks().isEmpty()) {
-            //this.setStatus(StatusTasks.NEW);
+    public StatusTasks getStatus() {
+        if (this.getListSubtasks().isEmpty()) {
             return StatusTasks.NEW;
         }
 
         StatusTasks statusOne = StatusTasks.NEW;
-        ArrayList<Subtask> listSubtasks = this.getSubtasks();
+        ArrayList<Subtask> listSubtasks = this.getListSubtasks();
 
         for (int i = 0; i < listSubtasks.size(); i++) {
-            if(i == 0 ){
+            if (i == 0) {
                 statusOne = listSubtasks.get(i).getStatus();
-                if(statusOne==StatusTasks.IN_PROGRESS)
-                {
+                if (statusOne == StatusTasks.IN_PROGRESS) {
                     break;
                 }
-            }
-            else {
-                if(statusOne!=listSubtasks.get(i).getStatus())
-                {
-                    statusOne=StatusTasks.IN_PROGRESS;
+            } else {
+                if (statusOne != listSubtasks.get(i).getStatus()) {
+                    statusOne = StatusTasks.IN_PROGRESS;
                     break;
                 }
             }
         }
-        //this.setStatus(statusOne);
 
         return statusOne;
     }
@@ -77,4 +76,9 @@ public class Epic extends Task {
     public void setStatus(StatusTasks status) {
         //Do nothing
     }
+
+    public void removeSubtask(Subtask subtask) {
+        listSubtasks.remove(subtask);
+    }
+
 }

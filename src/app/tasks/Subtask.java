@@ -3,13 +3,10 @@ package app.tasks;
 public class Subtask extends Task {
     private Epic epic;
 
-    public Subtask(Integer id, String name, String description) {
-        super(id, name, description);
-
-    }
-
-    public Subtask(String name, String description){
+    public Subtask(String name, String description, Epic epic) {
         super(name, description);
+        this.epic = epic;
+        epic.addSubtask(this);
     }
 
     public Epic getEpic() {
@@ -18,15 +15,11 @@ public class Subtask extends Task {
 
     public void setEpic(Epic epic) {
         this.epic = epic;
-        //this.epic.setStatus();
     }
 
     @Override
-    public void setStatus(StatusTasks status)
-    {
+    public void setStatus(StatusTasks status) {
         super.setStatus(status);
-        //this.getEpic().setStatus();
     }
-
 
 }
