@@ -19,7 +19,6 @@ public class TaskManager {
         return ++countId;
     }
 
-
     //  блок получения списка всех задач
 
     public ArrayList<Task> getAllTasks() {
@@ -33,6 +32,7 @@ public class TaskManager {
     public ArrayList<Subtask> getAllSubtasks() {
         return new ArrayList<Subtask>(subtasks.values());
     }
+
 
     //    Блок удаления всех задач
 
@@ -78,7 +78,7 @@ public class TaskManager {
         return epics.get(id);
     }
 
-    /// Блок добавления задач
+    // Блок добавления задач
     public Task appendTask(Task newTask) {
         int newId = nextId();
         newTask.setId(newId);
@@ -101,6 +101,7 @@ public class TaskManager {
         return newSubtask;
     }
 
+
 // Блок обновления задач
 
     public Task updateTask(Task updatedTask) {
@@ -110,7 +111,7 @@ public class TaskManager {
     public Epic updateEpic(Epic updatedEpic) {
         //Для избежания коллизий, если новый эпик содержит подзадач старого эпика, мы проверяем соответствия
         Epic existEpic = epics.get(updatedEpic.getId());
-        ArrayList <Subtask> tmpSubtasks = new ArrayList<>(existEpic.getListSubtasks());
+        ArrayList<Subtask> tmpSubtasks = new ArrayList<>(existEpic.getListSubtasks());
         tmpSubtasks.removeAll(updatedEpic.getListSubtasks());
 
         for (Subtask subtask : tmpSubtasks) {
@@ -121,10 +122,6 @@ public class TaskManager {
     }
 
     public Subtask updateSubtask(Subtask updatedSubtask) {
-        Subtask existSubtask = subtasks.get(updatedSubtask.getId());
-        if (existSubtask.getEpic() != updatedSubtask.getEpic()) {
-
-        }
         return subtasks.put(updatedSubtask.getId(), updatedSubtask);
     }
 
@@ -149,60 +146,5 @@ public class TaskManager {
         subtask.getEpic().removeSubtask(subtask);
         subtasks.remove(id);
     }
-
-//    public Subtask deleteSubtask(Epic epic) {
-//        ArrayList<Subtask> epicSubtasks = epic.getListSubtasks();
-//        epicSubtasks.remove();
-//        for (Subtask subtask : epicSubtasks) {
-//            return subtasks.remove(subtask.getId());
-//        }
-//        return null;
-//    }
-
-
-    //    Метод был deleteSubtask(Epic epic) почему возвращание  Subtask
-//    public Subtask clearSubtaskByEpic(Epic epic) {
-//        ArrayList<Subtask> epicSubtasks = epic.getListSubtasks();
-//        for (Subtask subtask : epicSubtasks) {
-//            subtasks.remove(subtask.getId());
-//        }
-//        return null;
-//    }
-
-
-    //    ! Очищаем лист внутри эпика передаваемый эпик
-//    public boolean clearSubtaskByEpic(Epic epic) {
-//        boolean isEmpty = epic.clearSuqbtasks();
-//        if (isEmpty) {
-//
-//        } else {
-//            return false;
-//        }
-//    }
-
-
-    // clear subtasks by Epic
-
-
-//    public void deleteSubtaskById(Integer id) {
-//        Subtask subtask = subtasks.get(id);
-//        Epic epic = subtask.getEpic();
-//        epic.removeSubtask(subtask);
-//        subtasks.remove(id);
-//        //Сделать в эпике метод удаления сабтаски и вызывать его. Так же удалить сабтаск из хэшмэпа !!!!
-//    }
-//
-//
-//    public ArrayList<Subtask> getSubtasksByEpicID(Integer id) {
-//        return epics.get(id).getListSubtasks();
-//    }
-//
-//    public ArrayList<Subtask> findAllSubtask() {
-//        return new ArrayList<>(subtasks.values());
-//    }
-//
-//    public Subtask findSubtaskById(Integer id) {
-//        return subtasks.get(id);
-//    }
 
 }

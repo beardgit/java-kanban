@@ -94,7 +94,6 @@ public class Main {
 
 
         System.out.println(manager.deleteTask(1));
-        //System.out.println(manager.deleteEpic(3));
 
     }
 

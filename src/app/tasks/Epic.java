@@ -17,7 +17,37 @@ public class Epic extends Task {
         return listSubtasks.add(subtask);
     }
 
-    public boolean removeSubtask(int id) {
+    @Override
+    public StatusTasks getStatus() {
+        if (this.getListSubtasks().isEmpty()) {
+            return StatusTasks.NEW;
+        }
+
+        StatusTasks statusOne = StatusTasks.NEW;
+        ArrayList<Subtask> listSubtasks = this.getListSubtasks();
+
+        for (int i = 0; i < listSubtasks.size(); i++) {
+            if (i == 0) {
+                statusOne = listSubtasks.get(i).getStatus();
+                if (statusOne == StatusTasks.IN_PROGRESS) {
+                    break;
+                }
+            } else {
+                if (statusOne != listSubtasks.get(i).getStatus()) {
+                    statusOne = StatusTasks.IN_PROGRESS;
+                    break;
+                }
+            }
+        }
+
+        return statusOne;
+    }
+
+    public boolean removeSubtask(Subtask subtask) {
+        return listSubtasks.remove(subtask);
+    }
+
+    public boolean removeSubtaskById(int id) {
         Subtask subtaskToDelete = null;
         if (!listSubtasks.isEmpty()) {
             for (Subtask subtask : listSubtasks) {
@@ -46,39 +76,8 @@ public class Epic extends Task {
     }
 
     @Override
-    public StatusTasks getStatus() {
-        if (this.getListSubtasks().isEmpty()) {
-            return StatusTasks.NEW;
-        }
-
-        StatusTasks statusOne = StatusTasks.NEW;
-        ArrayList<Subtask> listSubtasks = this.getListSubtasks();
-
-        for (int i = 0; i < listSubtasks.size(); i++) {
-            if (i == 0) {
-                statusOne = listSubtasks.get(i).getStatus();
-                if (statusOne == StatusTasks.IN_PROGRESS) {
-                    break;
-                }
-            } else {
-                if (statusOne != listSubtasks.get(i).getStatus()) {
-                    statusOne = StatusTasks.IN_PROGRESS;
-                    break;
-                }
-            }
-        }
-
-        return statusOne;
-    }
-
-
-    @Override
     public void setStatus(StatusTasks status) {
         //Do nothing
-    }
-
-    public void removeSubtask(Subtask subtask) {
-        listSubtasks.remove(subtask);
     }
 
 }
