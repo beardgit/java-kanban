@@ -1,4 +1,4 @@
-import app.manager.TaskManager;
+import app.manager.InMemoryTaskManager;
 import app.tasks.Epic;
 import app.tasks.StatusTasks;
 import app.tasks.Subtask;
@@ -7,7 +7,7 @@ import app.tasks.Task;
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager manager = new TaskManager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
 
         Task taskOne = new Task("Написать этот ToDo", "ох-ох-ох");
         Task taskSecond = new Task("Подарки", "закупить подарки семье");
@@ -98,3 +98,4 @@ public class Main {
     }
 
 }
+
