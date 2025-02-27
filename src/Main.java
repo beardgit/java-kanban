@@ -1,6 +1,6 @@
 import app.manager.InMemoryTaskManager;
 import app.tasks.Epic;
-import app.tasks.StatusTasks;
+import app.enumeration.StatusTasks;
 import app.tasks.Subtask;
 import app.tasks.Task;
 

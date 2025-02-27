@@ -1,5 +1,7 @@
 package app.tasks;
 
+import app.enumeration.StatusTasks;
+
 import java.util.Objects;
 
 public class Task {
