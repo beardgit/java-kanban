@@ -10,6 +10,13 @@ public class Task {
     private String description;
     private StatusTasks status = StatusTasks.NEW;
 
+    public Task(Task task){
+        id = task.getId();
+        name = task.getName();
+        description = task.getDescription();
+        status = task.getStatus();
+    }
+
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
