@@ -13,10 +13,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private HistoryManager historyManager;
+    private final HistoryManager historyManager;
 
     InMemoryTaskManager() {
-        this.historyManager = Manager.getDefaultHistory();
+        this.historyManager = Managers.getDefaultHistory();
     }
 
     private static Integer countId = 0;
