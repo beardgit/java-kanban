@@ -8,6 +8,9 @@ import app.tasks.Task;
 import java.util.List;
 
 public interface TaskManager {
+    //Получение истории
+    List<Task> getHistory();
+
     // Блок получения всех задач
     List<Task> getAllTasks();
 
@@ -53,3 +56,4 @@ public interface TaskManager {
     void deleteSubtask(Integer id);
 
 }
+
