@@ -1,4 +1,4 @@
-package app.tasks;
+package app.enumeration;
 
 public enum StatusTasks {
     NEW,

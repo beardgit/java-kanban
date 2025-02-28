@@ -1,5 +1,7 @@
 package app.tasks;
 
+import app.enumeration.StatusTasks;
+
 public class Subtask extends Task {
     private Epic epic;
 
