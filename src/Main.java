@@ -43,6 +43,7 @@ public class Main {
 
         System.out.println("История:");
         for (Task task : historyManager.getHistory()) {
+//            История должна быть пуста. не к истории taskManager
             System.out.println(task);
         }
         System.out.println(taskManager.getHistory());
