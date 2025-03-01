@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    //Создаем для лист для записи истории !TODO
-    private static ArrayList<Task> history = new ArrayList<>();
+    private List<Task> history = new ArrayList<>();
+
 
     @Override
     public void addToHistory(Task task) {
@@ -19,6 +19,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return history;
+        System.out.println(history);
+        return new ArrayList<>(history);
     }
 }

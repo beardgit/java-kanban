@@ -3,15 +3,16 @@ package app.tasks;
 import app.enumeration.StatusTasks;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> listSubtasks = new ArrayList<>();
+    private List<Subtask> listSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
     }
 
-    public ArrayList<Subtask> getListSubtasks() {
+    public List<Subtask> getListSubtasks() {
         return listSubtasks;
     }
 
@@ -26,7 +27,7 @@ public class Epic extends Task {
         }
 
         StatusTasks statusOne = StatusTasks.NEW;
-        ArrayList<Subtask> listSubtasks = this.getListSubtasks();
+        List<Subtask> listSubtasks = this.getListSubtasks();
 
         for (int i = 0; i < listSubtasks.size(); i++) {
             if (i == 0) {

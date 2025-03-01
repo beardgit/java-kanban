@@ -40,7 +40,7 @@ public class Main {
         taskManager.getEpicById(epic12.getId());
         taskManager.getSubtaskById(subtask1.getId());
 
-        // Печать истории
+
         System.out.println("История:");
         for (Task task : historyManager.getHistory()) {
             System.out.println(task);
