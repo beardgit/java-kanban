@@ -23,8 +23,6 @@ public interface TaskManager {
 
     boolean clearEpics();
 
-    boolean clearEpic();
-
     boolean clearSubtasks();
 
     // Блок получения задач по id

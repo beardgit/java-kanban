@@ -55,10 +55,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
-    @Override
-    public boolean clearEpic() {
-        return false;
-    }
 
     @Override
     public boolean clearEpics() {
