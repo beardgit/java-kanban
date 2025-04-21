@@ -8,7 +8,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     //     Хранение головы и хвоста
     private Node head;
+
     private Node tail;
+
 
     //  Хранение истории
     private final Map<Integer, Node> historyMap = new HashMap<>();
@@ -16,13 +18,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     //   Блок обработки Node
     private void linkLast(Task task) {
         Node nodeTask = new Node(task);
-        if (head == null && tail == null || historyMap.isEmpty()) {
+        if (head == null && tail == null) {
             this.head = nodeTask;
+            nodeTask.setNext(nodeTask);
             this.tail = nodeTask;
         }else {
             tail.setNext(nodeTask);
             nodeTask.setPrev(this.tail);
-            tail = nodeTask;
+            this.tail = nodeTask;
         }
         historyMap.put(task.getId(), nodeTask);
     }
@@ -42,14 +45,16 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     // блок обработки истории
+
+
     @Override
     public void addToHistory(Task task) {
-        if(task != null){
+        if (task != null) {
             Node nodeTask = historyMap.get(task.getId());
-           if(nodeTask != null){
-               removeNode(nodeTask);
-           }
-            linkLast(nodeTask.getTask());
+            if (nodeTask != null) {
+                removeNode(nodeTask); // Удаляем существующий узел
+            }
+            linkLast(task); // Добавляем новый узел для задачи
         }
     }
 
@@ -66,7 +71,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public List<Task> getHistory() {
         List<Task> taskList = new ArrayList<>();
-        Node node = head;
+        Node node = this.head;
 
         while (node != null){
             Task task = node.getTask();
@@ -75,4 +80,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         return taskList;
     }
+
 }

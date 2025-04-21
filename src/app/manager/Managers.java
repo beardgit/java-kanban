@@ -1,7 +1,5 @@
 package app.manager;
 
-import org.w3c.dom.Node;
-
 public class Managers {
 
     public static TaskManager getDefault() {
