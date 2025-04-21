@@ -24,8 +24,8 @@ public class Main {
         Task task9 = taskManager.appendTask(new Task("Task 9", "Description"));
         Task task10 = taskManager.appendTask(new Task("Task 10", "Description"));
         Task task11 = taskManager.appendTask(new Task("Task 11", "Description"));
-        Epic epic12 = taskManager.appendEpic(new Epic("Epic 12", "Description"));
-        Subtask subtask1 = taskManager.appendSubtask(new Subtask("Subtask 1", "Description", epic12));
+//        Epic epic12 = taskManager.appendEpic(new Epic("Epic 12", "Description"));
+//        Subtask subtask1 = taskManager.appendSubtask(new Subtask("Subtask 1", "Description", epic12));
 
         // Получение задач (добавление в историю)
         taskManager.getTaskById(task1.getId());
