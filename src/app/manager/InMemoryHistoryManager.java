@@ -18,8 +18,15 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
+    public void removeToHistory(Task task) {
+        System.out.println("Удаляю!");
+    }
+
+    @Override
     public List<Task> getHistory() {
         System.out.println(history);
         return new ArrayList<>(history);
     }
+
+
 }
