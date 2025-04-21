@@ -2,10 +2,7 @@ package app.manager;
 
 import app.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -58,12 +55,24 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void removeToHistory(Task task) {
+        if(task != null){
+            Integer id = task.getId();
+            Node nodeTask = id != null ? historyMap.get(id) :  null;
+            removeNode(nodeTask);
+        }
 
     }
 
     @Override
     public List<Task> getHistory() {
+        List<Task> taskList = new ArrayList<>();
+        Node node = head;
 
+        while (node != null){
+            Task task = node.getTask();
+            taskList.add(task);
+            node = node.getNext();
+        }
+        return taskList;
     }
-
 }
