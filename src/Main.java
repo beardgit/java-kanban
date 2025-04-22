@@ -7,23 +7,20 @@ import app.tasks.Task;
 
 public class Main {
 
-public static void main(String[] args) {
+    public static void main(String[] args) {
+
         TaskManager taskManager = Managers.getDefault();
 
-        // Создаем  задачи
         Task task1 = taskManager.appendTask(new Task("Task 1", "Description"));
         Task task2 = taskManager.appendTask(new Task("Task 2", "Description"));
 
-        //  добавляем эпик с тремя подзадачами
         Epic epicWithSubtasks = taskManager.appendEpic(new Epic("Epic with Subtasks", "Description"));
         Subtask subtask1 = taskManager.appendSubtask(new Subtask("Subtask 1", "Description", epicWithSubtasks));
         Subtask subtask2 = taskManager.appendSubtask(new Subtask("Subtask 2", "Description", epicWithSubtasks));
         Subtask subtask3 = taskManager.appendSubtask(new Subtask("Subtask 3", "Description", epicWithSubtasks));
 
-        // добавляем эпик   без подзадач
         Epic epicWithoutSubtasks = taskManager.appendEpic(new Epic("Epic without Subtasks", "Description"));
 
-        // делаем запросы к задачам и добавляем их в историю
         System.out.println("Запросы к задачам:");
         taskManager.getTaskById(task1.getId());
         taskManager.getEpicById(epicWithSubtasks.getId());
@@ -33,25 +30,23 @@ public static void main(String[] args) {
         taskManager.getEpicById(epicWithoutSubtasks.getId());
         taskManager.getSubtaskById(subtask3.getId());
 
-        // Вывод истории после каждого запроса
         System.out.println("История:");
-    printHistory(taskManager);
-        // Удаление задачи из истории
+        printHistory(taskManager);
         System.out.println("\nУдаляем задачу Task 1:");
         taskManager.deleteTask(task1.getId());
         System.out.println("История:");
-    printHistory(taskManager);
+        printHistory(taskManager);
 
-        // Удаление эпика с подзадачами
         System.out.println("\nУдаляем эпик с подзадачами:");
         taskManager.deleteEpic(epicWithSubtasks.getId());
         System.out.println("История:");
 
-    printHistory(taskManager);
+        printHistory(taskManager);
 
 
     }
-    private static  void printHistory(TaskManager taskManager){
+
+    private static void printHistory(TaskManager taskManager) {
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
         }
