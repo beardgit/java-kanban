@@ -11,10 +11,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node tail;
 
 
-    //  Хранение истории
+    //  Хранение истории в Map
     private final Map<Integer, Node> historyMap = new HashMap<>();
 
-
+    // Блок связки и удаления Node
     private void linkLast(Node newNode) {
 
         if (head == null) {
@@ -29,58 +29,57 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    @Override
-    public void addToHistory(Task task) {
-        if (task == null) {
-            return; // Просто выходим, если задача равна null
-        }
-        Integer keyTask = task.getId();
-        // Если задача уже есть в истории, удаляем её из текущего места
-        if (historyMap.containsKey(keyTask)) {
-            Node existingNode = historyMap.get(keyTask);
-            removeNode(existingNode); // Удаляем старый узел из списка
-            historyMap.remove(keyTask); // Удаляем задачу из карты
-        }
-        // Создаем новый узел для задачи
-        Node newNode = new Node(task);
-        // Добавляем задачу в конец списка
-        linkLast(newNode);
-        // Обновляем карту
-        historyMap.put(keyTask, newNode);
-    }
-
     private void removeNode(Node node) {
         if (node == null) {
-            return; // Нечего удалять
+            return;
         }
-
         Node prev = node.getPrev();
         Node next = node.getNext();
 
         if (prev != null) {
-            prev.setNext(next); // Перенаправляем ссылку prev->next
+            prev.setNext(next);
         } else {
-            head = next; // Если узел был головой, обновляем голову
+            head = next;
         }
 
         if (next != null) {
-            next.setPrev(prev); // Перенаправляем ссылку next->prev
+            next.setPrev(prev);
         } else {
-            tail = prev; // Если узел был хвостом, обновляем хвост
+            tail = prev;
         }
     }
+
+    //   Блок  обработки добавления и удаления в историю
+    @Override
+    public void addToHistory(Task task) {
+        if (task == null) {
+            return;
+        }
+        Integer keyTask = task.getId();
+
+        if (historyMap.containsKey(keyTask)) {
+            Node existingNode = historyMap.get(keyTask);
+            removeNode(existingNode); // Удаляем старый узел из связи node
+            historyMap.remove(keyTask); // Удаляем задачу из списка истории
+        }
+
+        Node newNode = new Node(task);
+        linkLast(newNode);
+        historyMap.put(keyTask, newNode);
+    }
+
 
     @Override
     public void removeToHistory(Task task) {
         if (task == null) {
-            return; // Просто выходим, если задача равна null
+            return;
         }
 
         Integer id = task.getId();
         Node nodeTask = historyMap.get(id);
         if (nodeTask != null) {
-            removeNode(nodeTask); // Удаляем узел из списка
-            historyMap.remove(id); // Удаляем задачу из карты
+            removeNode(nodeTask);
+            historyMap.remove(id);
         }
     }
 

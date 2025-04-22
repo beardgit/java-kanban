@@ -11,15 +11,16 @@ public class Main {
 
         TaskManager taskManager = Managers.getDefault();
 
-        Task task1 = taskManager.appendTask(new Task("Task 1", "Description"));
-        Task task2 = taskManager.appendTask(new Task("Task 2", "Description"));
+        Task task1 = taskManager.appendTask(new Task("Задача 1", "Описание"));
+        Task task2 = taskManager.appendTask(new Task("Задача 2", "Описание"));
 
-        Epic epicWithSubtasks = taskManager.appendEpic(new Epic("Epic with Subtasks", "Description"));
-        Subtask subtask1 = taskManager.appendSubtask(new Subtask("Subtask 1", "Description", epicWithSubtasks));
-        Subtask subtask2 = taskManager.appendSubtask(new Subtask("Subtask 2", "Description", epicWithSubtasks));
-        Subtask subtask3 = taskManager.appendSubtask(new Subtask("Subtask 3", "Description", epicWithSubtasks));
+        // Создаем Эпик с подзадачами
+        Epic epicWithSubtasks = taskManager.appendEpic(new Epic("Эпик с подзадачами", "Описание"));
+        Subtask subtask1 = taskManager.appendSubtask(new Subtask("Подзадача 1", "Описание", epicWithSubtasks));
+        Subtask subtask2 = taskManager.appendSubtask(new Subtask("Подзадача 2", "Описание", epicWithSubtasks));
+        Subtask subtask3 = taskManager.appendSubtask(new Subtask("Подзадача 3", "Описание", epicWithSubtasks));
 
-        Epic epicWithoutSubtasks = taskManager.appendEpic(new Epic("Epic without Subtasks", "Description"));
+        Epic epicWithoutSubtasks = taskManager.appendEpic(new Epic("Эпик без подзадач", "Описание"));
 
         System.out.println("Запросы к задачам:");
         taskManager.getTaskById(task1.getId());
@@ -32,7 +33,7 @@ public class Main {
 
         System.out.println("История:");
         printHistory(taskManager);
-        System.out.println("\nУдаляем задачу Task 1:");
+        System.out.println("\nУдаляем задачу Задача 1:");
         taskManager.deleteTask(task1.getId());
         System.out.println("История:");
         printHistory(taskManager);
@@ -42,8 +43,6 @@ public class Main {
         System.out.println("История:");
 
         printHistory(taskManager);
-
-
     }
 
     private static void printHistory(TaskManager taskManager) {
@@ -51,6 +50,5 @@ public class Main {
             System.out.println(task);
         }
     }
-
 }
 

@@ -12,5 +12,4 @@ public interface HistoryManager {
 
     void removeToHistory(Task task);
 
-
 }

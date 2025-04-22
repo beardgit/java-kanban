@@ -14,31 +14,34 @@ class Node {
         this.task = task;
     }
 
+    // Блок геттеров
     public Node getPrev() {
         return this.prev;
     }
 
-    public void setPrev(Node prev) {
-        this.prev = prev;
-    }
 
     public Node getNext() {
         return this.next;
-    }
-
-    public void setNext(Node next) {
-        this.next = next;
     }
 
     public Task getTask() {
         return task;
     }
 
+    // блок сеттеров
+    public void setNext(Node next) {
+        this.next = next;
+    }
+
+    public void setPrev(Node prev) {
+        this.prev = prev;
+    }
+
     public void setTask(Task task) {
         this.task = task;
     }
 
-    //Переопределяем equals и hashCode;
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
