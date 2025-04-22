@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTaskManagerTest {
@@ -19,35 +21,75 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void testAddAndGetTask() {
-        Task task = taskManager.appendTask(new Task("Task Name", "Description"));
-        assertNotNull(taskManager.getTaskById(task.getId()), "Задача не найдена");
+    void shouldAddTask() {
+        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
+        Task task = new Task("Task 1", "Description 1");
+
+        manager.appendTask(task);
+
+        assertNotNull(manager.getTaskById(task.getId()));
+        assertEquals(1, manager.getAllTasks().size());
     }
 
-    @Test
-    void testAddAndGetEpic() {
-        Epic epic = taskManager.appendEpic(new Epic("Epic Name", "Description"));
-        assertNotNull(taskManager.getEpicById(epic.getId()), "Эпик не найден");
-    }
-
-    @Test
-    void testAddAndGetSubtask() {
-        Epic epic = taskManager.appendEpic(new Epic("Epic Name", "Description"));
-        Subtask subtask = taskManager.appendSubtask(new Subtask("Subtask Name", "Description", epic));
-        assertNotNull(taskManager.getSubtaskById(subtask.getId()), "Подзадача не найдена");
-    }
 
 
     @Test
-    void testAddAndGetTasks() {
-        Task task = taskManager.appendTask(new Task("Task Name", "Description"));
-        Epic epic = taskManager.appendEpic(new Epic("Epic Name", "Description"));
-        Subtask subtask = taskManager.appendSubtask(new Subtask("Subtask Name", "Description", (Epic) epic));
+    void shouldUpdateTask() {
+        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
+        Task task = new Task("Task 1", "Description 1");
+        manager.appendTask(task);
 
-        assertNotNull(taskManager.getTaskById(task.getId()), "Задача не найдена");
-        assertNotNull(taskManager.getEpicById(epic.getId()), "Эпик не найден");
-        assertNotNull(taskManager.getSubtaskById(subtask.getId()), "Подзадача не найдена");
+        Task updatedTask = new Task("Updated Task", "Updated Description");
+        updatedTask.setId(task.getId());
+        manager.updateTask(updatedTask);
+
+        Task retrievedTask = manager.getTaskById(task.getId());
+        assertEquals("Updated Task", retrievedTask.getName());
     }
+
+    @Test
+    void shouldClearAllTasks() {
+        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
+        manager.appendTask(new Task("Task 1", "Description 1"));
+        manager.appendTask(new Task("Task 2", "Description 2"));
+
+        boolean isCleared = manager.clearTasks();
+        assertTrue(isCleared);
+        assertTrue(manager.getAllTasks().isEmpty());
+    }
+
+    @Test
+    void shouldAddEpicAndSubtask() {
+        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
+        Epic epic = new Epic("Epic 1", "Description 1");
+        manager.appendEpic(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Description 1", epic);
+        manager.appendSubtask(subtask);
+
+        assertNotNull(manager.getEpicById(epic.getId()));
+        assertNotNull(manager.getSubtaskById(subtask.getId()));
+        assertEquals(1, epic.getListSubtasks().size());
+    }
+
+
+    @Test
+    void shouldGetHistory() {
+        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
+        Task task1 = new Task("Task 1", "Description 1");
+        Task task2 = new Task("Task 2", "Description 2");
+        manager.appendTask(task1);
+        manager.appendTask(task2);
+
+        manager.getTaskById(task1.getId());
+        manager.getTaskById(task2.getId());
+
+        List<Task> history = manager.getHistory();
+        assertEquals(2, history.size());
+        assertEquals(task1, history.get(0));
+        assertEquals(task2, history.get(1));
+    }
+
 
 
 }

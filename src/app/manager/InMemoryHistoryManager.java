@@ -16,7 +16,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Блок связки и удаления Node
     private void linkLast(Node newNode) {
-
         if (head == null) {
             head = newNode;
             tail = newNode;
@@ -48,6 +47,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = prev;
         }
     }
+
 
     //   Блок  обработки добавления и удаления в историю
     @Override

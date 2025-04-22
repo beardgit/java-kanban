@@ -30,6 +30,7 @@ public class InMemoryTaskManager implements TaskManager {
     //  блок получения списка всех задач
     @Override
     public List<Task> getAllTasks() {
+
         return new ArrayList<>(tasks.values());
     }
 
