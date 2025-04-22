@@ -10,7 +10,7 @@ public class Task {
     private String description;
     private StatusTasks status = StatusTasks.NEW;
 
-    public Task(Task task){
+    public Task(Task task) {
         id = task.getId();
         name = task.getName();
         description = task.getDescription();

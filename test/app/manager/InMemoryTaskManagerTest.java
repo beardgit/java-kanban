@@ -21,7 +21,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldAddTask() {
+    void testdAddTask() {
         InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
         Task task = new Task("Task 1", "Description 1");
 
@@ -32,9 +32,8 @@ public class InMemoryTaskManagerTest {
     }
 
 
-
     @Test
-    void shouldUpdateTask() {
+    void testUpdateTask() {
         InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
         Task task = new Task("Task 1", "Description 1");
         manager.appendTask(task);
@@ -48,7 +47,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldClearAllTasks() {
+    void testClearAllTasks() {
         InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
         manager.appendTask(new Task("Task 1", "Description 1"));
         manager.appendTask(new Task("Task 2", "Description 2"));
@@ -59,7 +58,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldAddEpicAndSubtask() {
+    void testAddEpicAndSubtask() {
         InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
         Epic epic = new Epic("Epic 1", "Description 1");
         manager.appendEpic(epic);
@@ -74,7 +73,7 @@ public class InMemoryTaskManagerTest {
 
 
     @Test
-    void shouldGetHistory() {
+    void testGetHistory() {
         InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
         Task task1 = new Task("Task 1", "Description 1");
         Task task2 = new Task("Task 2", "Description 2");
@@ -89,7 +88,6 @@ public class InMemoryTaskManagerTest {
         assertEquals(task1, history.get(0));
         assertEquals(task2, history.get(1));
     }
-
 
 
 }
