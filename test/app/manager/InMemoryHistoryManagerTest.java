@@ -1,8 +1,7 @@
 package app.manager;
 
-import app.tasks.Epic;
-import app.tasks.Subtask;
 import app.tasks.Task;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,42 +10,84 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryHistoryManagerTest {
 
+    InMemoryHistoryManager historyManager;
+
+    @BeforeEach
+    void initHistoryManager() {
+        historyManager = new InMemoryHistoryManager();
+    }
+
     @Test
-    void testAddToHistory() {
-        HistoryManager historyManager = Managers.getDefaultHistory();
-        Task task = new Task("Task Name", "Description");
+    void testAddTaskToHistory() {
+
+        Task task = new Task("Task 1", "Description 1");
+        task.setId(1);
 
         historyManager.addToHistory(task);
 
         List<Task> history = historyManager.getHistory();
-        assertNotNull(history, "История не должна быть null");
-        assertFalse(history.isEmpty(), "История должна содержать элементы");
-        assertEquals(1, history.size(), "Неверное количество задач в истории");
-        assertEquals(task, history.get(0), "Задачи в истории не совпадают");
+        assertEquals(1, history.size());
+        assertEquals(task, history.get(0));
     }
 
     @Test
-    public void testHistoryLimit() {
-        HistoryManager historyManager1 = new InMemoryHistoryManager();
-        HistoryManager historyManager2 = new InMemoryHistoryManager();
+    void testRemoveTaskFromHistory() {
 
-        for (int i = 0; i < 15; i++) {
-            Task task = new Task("Task " + i, "Description " + i);
-            Task epic = new Task("Epic " + i, "Description " + i);
-            historyManager1.addToHistory(task);
-            historyManager2.addToHistory(epic);
+        Task task = new Task("Task 1", "Description 1");
+        task.setId(1);
 
-        }
-        List<Task> history1 = historyManager1.getHistory();
-        assertEquals(10, history1.size()); // История должна содержать ровно 10 элементов
-        assertEquals("Task 14", history1.get(9).getName()); // Последняя добавленная задача
-        assertEquals("Task 5", history1.get(0).getName()); // Самая старая задача после удаления
+        historyManager.addToHistory(task);
+        historyManager.removeFromHistory(task);
 
-
-        List<Task> history2 = historyManager2.getHistory();
-        assertEquals(10, history2.size()); // История должна содержать ровно 10 элементов
-        assertEquals("Epic 14", history2.get(9).getName()); // Последняя добавленная задача
-        assertEquals("Epic 5", history2.get(0).getName()); // Самая старая задача после у
-
+        List<Task> history = historyManager.getHistory();
+        assertTrue(history.isEmpty());
     }
+
+
+    @Test
+    void testNotAllowDuplicateTasksInHistory() {
+
+        Task task = new Task("Task 1", "Description 1");
+        task.setId(1);
+
+        historyManager.addToHistory(task);
+        historyManager.addToHistory(task);
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(1, history.size());
+    }
+
+    @Test
+    void testMaintainFIFOOrderInHistory() {
+
+        Task task1 = new Task("Task 1", "Description 1");
+        Task task2 = new Task("Task 2", "Description 2");
+        task1.setId(1);
+        task2.setId(2);
+
+        historyManager.addToHistory(task1);
+        historyManager.addToHistory(task2);
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(task1, history.get(0));
+        assertEquals(task2, history.get(1));
+    }
+
+    @Test
+    void testMoveTaskToEndOfHistoryOnReAddition() {
+
+        Task task1 = new Task("Task 1", "Description 1");
+        Task task2 = new Task("Task 2", "Description 2");
+        task1.setId(1);
+        task2.setId(2);
+
+        historyManager.addToHistory(task1);
+        historyManager.addToHistory(task2);
+        historyManager.addToHistory(task1); // Повторное добавление
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(task2, history.get(0));
+        assertEquals(task1, history.get(1));
+    }
+
 }

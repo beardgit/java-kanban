@@ -21,7 +21,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     private static Integer countId = 0;
 
-    //  Создание обобщенного ID  классу
+    //  Создание обобщенного ID классу
     private int nextId() {
         return ++countId;
     }
@@ -158,24 +158,41 @@ public class InMemoryTaskManager implements TaskManager {
     //    Блок удаления по id
     @Override
     public Task deleteTask(Integer id) {
-        return tasks.remove(id);
+        Task remove = tasks.remove(id);
+        if (remove != null) {
+            historyManager.removeFromHistory(remove);
+        }
+        return remove;
     }
 
     @Override
     public Epic deleteEpic(Integer id) {
+
         Epic epic = epics.get(id);
-        for (Subtask subtask : epic.getListSubtasks()) {
-            subtasks.remove(subtask.getId());
+
+        if (epic != null) {
+            for (Subtask subtask : epic.getListSubtasks()) {
+                subtasks.remove(subtask.getId());
+                historyManager.removeFromHistory(subtask);
+            }
+            epic.clearSubtasks();
+            epics.remove(id);
+            historyManager.removeFromHistory(epic);
+            return epic;
         }
-        epic.clearSubtasks();
-        return epics.remove(id);
+        return null;
     }
 
     @Override
     public void deleteSubtask(Integer id) {
         Subtask subtask = subtasks.get(id);
-        subtask.getEpic().removeSubtask(subtask);
-        subtasks.remove(id);
+
+        if (subtask != null) {
+            subtask.getEpic().removeSubtask(subtask);
+            subtasks.remove(id);
+            historyManager.removeFromHistory(subtask);
+        }
+
     }
 
     //Получение истории

@@ -14,4 +14,5 @@ public class TaskTest {
         Assertions.assertEquals(task1, task2); // Равны по id
         Assertions.assertNotSame(task1, task2); // Но это разные объекты
     }
+
 }
