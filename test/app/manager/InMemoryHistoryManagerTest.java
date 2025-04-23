@@ -30,7 +30,7 @@ public class InMemoryHistoryManagerTest {
         task.setId(1);
 
         historyManager.addToHistory(task);
-        historyManager.removeToHistory(task);
+        historyManager.removeFromHistory(task);
 
         List<Task> history = historyManager.getHistory();
         assertTrue(history.isEmpty());

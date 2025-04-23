@@ -55,14 +55,13 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
+
+        // Убираем повторяющуюся задачу из historyMap
         Integer keyTask = task.getId();
+        Node existingNode = historyMap.remove(keyTask);  // Удаляем задачу из списка истории и возвращаем узел который удалили
+        removeNode(existingNode);// Удаляем старый узел из связи node
 
-        if (historyMap.containsKey(keyTask)) {
-            Node existingNode = historyMap.get(keyTask);
-            removeNode(existingNode); // Удаляем старый узел из связи node
-            historyMap.remove(keyTask); // Удаляем задачу из списка истории
-        }
-
+        // Выполняем добавление создаваемого узла в историю и устанавливаем связь
         Node newNode = new Node(task);
         linkLast(newNode);
         historyMap.put(keyTask, newNode);
@@ -70,17 +69,15 @@ public class InMemoryHistoryManager implements HistoryManager {
 
 
     @Override
-    public void removeToHistory(Task task) {
+    public void removeFromHistory(Task task) {
         if (task == null) {
             return;
         }
 
         Integer id = task.getId();
-        Node nodeTask = historyMap.get(id);
-        if (nodeTask != null) {
-            removeNode(nodeTask);
-            historyMap.remove(id);
-        }
+        Node nodeTask = historyMap.remove(id);
+        removeNode(nodeTask);
+
     }
 
 

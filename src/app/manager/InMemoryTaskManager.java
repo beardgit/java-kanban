@@ -162,7 +162,7 @@ public class InMemoryTaskManager implements TaskManager {
 //        return tasks.remove(id);
         Task remove = tasks.remove(id);
         if (remove != null) {
-            historyManager.removeToHistory(remove);
+            historyManager.removeFromHistory(remove);
         }
         return remove;
     }
@@ -175,11 +175,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic != null) {
             for (Subtask subtask : epic.getListSubtasks()) {
                 subtasks.remove(subtask.getId());
-                historyManager.removeToHistory(subtask);
+                historyManager.removeFromHistory(subtask);
             }
             epic.clearSubtasks();
             epics.remove(id);
-            historyManager.removeToHistory(epic);
+            historyManager.removeFromHistory(epic);
             return epic;
         }
         return null;
@@ -192,7 +192,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask != null) {
             subtask.getEpic().removeSubtask(subtask);
             subtasks.remove(id);
-            historyManager.removeToHistory(subtask);
+            historyManager.removeFromHistory(subtask);
         }
 
     }
