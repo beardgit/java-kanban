@@ -1,6 +1,7 @@
 package app.manager;
 
 import app.tasks.Task;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,10 +10,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryHistoryManagerTest {
 
+    InMemoryHistoryManager historyManager;
+
+    @BeforeEach
+    void initHistoryManager() {
+        historyManager = new InMemoryHistoryManager();
+    }
 
     @Test
     void testAddTaskToHistory() {
-        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
         Task task = new Task("Task 1", "Description 1");
         task.setId(1);
 
@@ -25,7 +32,7 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     void testRemoveTaskFromHistory() {
-        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
         Task task = new Task("Task 1", "Description 1");
         task.setId(1);
 
@@ -39,7 +46,7 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     void testNotAllowDuplicateTasksInHistory() {
-        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
         Task task = new Task("Task 1", "Description 1");
         task.setId(1);
 
@@ -52,7 +59,7 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     void testMaintainFIFOOrderInHistory() {
-        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
         Task task1 = new Task("Task 1", "Description 1");
         Task task2 = new Task("Task 2", "Description 2");
         task1.setId(1);
@@ -68,7 +75,7 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     void testMoveTaskToEndOfHistoryOnReAddition() {
-        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
         Task task1 = new Task("Task 1", "Description 1");
         Task task2 = new Task("Task 2", "Description 2");
         task1.setId(1);
@@ -82,6 +89,5 @@ public class InMemoryHistoryManagerTest {
         assertEquals(task2, history.get(0));
         assertEquals(task1, history.get(1));
     }
-
 
 }

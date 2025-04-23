@@ -21,7 +21,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     private static Integer countId = 0;
 
-    //  Создание обобщенного ID  классу
+    //  Создание обобщенного ID классу
     private int nextId() {
         return ++countId;
     }
@@ -30,7 +30,6 @@ public class InMemoryTaskManager implements TaskManager {
     //  блок получения списка всех задач
     @Override
     public List<Task> getAllTasks() {
-
         return new ArrayList<>(tasks.values());
     }
 
@@ -159,7 +158,6 @@ public class InMemoryTaskManager implements TaskManager {
     //    Блок удаления по id
     @Override
     public Task deleteTask(Integer id) {
-//        return tasks.remove(id);
         Task remove = tasks.remove(id);
         if (remove != null) {
             historyManager.removeFromHistory(remove);
