@@ -1,6 +1,7 @@
 package app.tasks;
 
 import app.enumeration.StatusTasks;
+import app.enumeration.TypeTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,11 @@ public class Epic extends Task {
             listSubtasks.clear();
             return true;
         }
+    }
+
+    @Override
+    public TypeTask getType() {
+        return TypeTask.EPIC;
     }
 
     @Override

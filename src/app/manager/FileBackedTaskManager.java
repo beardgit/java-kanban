@@ -1,10 +1,14 @@
 package app.manager;
 
 import app.enumeration.TypeTask;
+import app.exception.FileLoadException;
+import app.exception.FileSaveException;
 import app.tasks.Epic;
 import app.tasks.Subtask;
 import app.tasks.Task;
 
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +24,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
 
-    //   Блок получения данных
+    //    Блок сохранения и записи данных
     private Map<TypeTask, List<? extends Task>> getAll() {
         System.out.println("get all List Task , Epic , Subtask");
 
@@ -35,45 +39,70 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
 //        Получить данные
-        Map<TypeTask, List<? extends Task>> taskData =  getAll();
+        Map<TypeTask, List<? extends Task>> taskData = getAll();
 
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(filePath)) {
 
-//        Обработать данные
+            bufferedWriter.write("id,type,name,status,description,epic");
+            bufferedWriter.newLine();
 
-// Сформировать файл
+            for (Task task : taskData.get(TypeTask.TASK)) {
+                bufferedWriter.write(stringify(task));
+                bufferedWriter.newLine();
+            }
 
-// записать в файл
+            for (Task task : taskData.get(TypeTask.EPIC)) {
+                bufferedWriter.write(stringify(task));
+                bufferedWriter.newLine();
+            }
+
+            for (Task task : taskData.get(TypeTask.SUBTASK)) {
+                bufferedWriter.write(stringify(task));
+                bufferedWriter.newLine();
+            }
+
+        } catch (IOException e) {
+            throw new FileSaveException(e.getMessage());
+        }
 
     }
 
+    private <T extends Task> String stringify(T task) {
+        Integer id = task.getId();
+        String type = String.valueOf(task.getType());
+        String name = task.getName();
+        String status = String.valueOf(task.getStatus());
+        String description = task.getDescription() != null ? task.getDescription() : "";
+        Integer epic = task instanceof Subtask ? ((Subtask) task).getEpic().getId() : null;
 
-    // блок обработки данных
-//public <T> String stringifyToListTask(List<T> listTasks){
-//
-//}
-
-public <T extends Task> String stringify(T task, TypeTask typeTask){
-     Integer id = task.getId() ;
-     String type = String.valueOf(typeTask);
-     String name = task.getName();
-     String status = String.valueOf(task.getStatus());
-     String description = task.getDescription();
-     Integer epicId = task.getClass() == Subtask.class ? ((Subtask) task).getEpic().getId() : null;
-
-     StringBuilder str = new StringBuilder();
-     str.append(id == null ? "" : id).append(",")
-             .append(type)
-             .append()
-
-}
+        return String.format("%d,%s,%s,%s,%s,%s",
+                id,
+                type,
+                name,
+                status,
+                description,
+                epic != null ? epic : "");
+    }
 
 
+//    Блок считывания данных из файла
 
+    static FileBackedTaskManager loadFromFile(File file) {
 
+        HistoryManager historyManager = new InMemoryHistoryManager();
+        FileBackedTaskManager manager = new FileBackedTaskManager(historyManager, file.toPath());
 
-    // блок записи данных
+        TaskManager taskManager = Managers.getDefault();
 
-
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+              bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     // Блок переопределения методов

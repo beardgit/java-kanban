@@ -1,6 +1,7 @@
 package app.tasks;
 
 import app.enumeration.StatusTasks;
+import app.enumeration.TypeTask;
 
 public class Subtask extends Task {
     private Epic epic;
@@ -20,8 +21,14 @@ public class Subtask extends Task {
     }
 
     @Override
+    public TypeTask getType() {
+        return TypeTask.SUBTASK;
+    }
+
+    @Override
     public void setStatus(StatusTasks status) {
         super.setStatus(status);
     }
+
 
 }
