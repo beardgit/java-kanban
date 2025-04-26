@@ -10,6 +10,7 @@ public class Task {
     private String name;
     private String description;
     private StatusTasks status = StatusTasks.NEW;
+    private final TypeTask type = TypeTask.TASK;
 
     public Task(Task task) {
         id = task.getId();
@@ -59,7 +60,7 @@ public class Task {
     }
 
     public TypeTask getType() {
-        return TypeTask.TASK;
+        return this.type;
     }
 
     public void setId(Integer id) {

@@ -12,15 +12,30 @@ public class Main {
         TaskManager taskManager = Managers.getDefault();
 
         Task task1 = taskManager.appendTask(new Task("Задача 1", "Описание"));
+
         Task task2 = taskManager.appendTask(new Task("Задача 2", "Описание"));
 
+        System.out.println(task2.getId());
         // Создаем Эпик с подзадачами
         Epic epicWithSubtasks = taskManager.appendEpic(new Epic("Эпик с подзадачами", "Описание"));
-        Subtask subtask1 = taskManager.appendSubtask(new Subtask("Подзадача 1", "Описание", epicWithSubtasks));
-        Subtask subtask2 = taskManager.appendSubtask(new Subtask("Подзадача 2", "Описание", epicWithSubtasks));
-        Subtask subtask3 = taskManager.appendSubtask(new Subtask("Подзадача 3", "Описание", epicWithSubtasks));
+
+        Subtask subtask1 = taskManager.appendSubtask(new Subtask("Подзадача 1", "Описание", epicWithSubtasks.getId()));
+
+        Subtask subtask2 = taskManager.appendSubtask(new Subtask("Подзадача 2", "Описание", epicWithSubtasks.getId()));
+
+        Subtask subtask3 = taskManager.appendSubtask(new Subtask("Подзадача 3", "Описание", epicWithSubtasks.getId()));
+
+        taskManager.deleteEpic(epicWithSubtasks.getId());
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+
 
         Epic epicWithoutSubtasks = taskManager.appendEpic(new Epic("Эпик без подзадач", "Описание"));
+        System.out.println(epicWithoutSubtasks.getId());
 
         System.out.println("Запросы к задачам:");
         taskManager.getTaskById(task1.getId());
