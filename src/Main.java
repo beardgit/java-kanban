@@ -1,62 +1,79 @@
 
+import app.manager.FileBackedTaskManager;
 import app.manager.Managers;
-import app.manager.TaskManager;
 import app.tasks.Epic;
 import app.tasks.Subtask;
 import app.tasks.Task;
 
-public class Main {
+import java.nio.file.Path;
 
+public class Main {
     public static void main(String[] args) {
 
-        TaskManager taskManager = Managers.getDefault();
+        // Создаем временный файл для сохранения данных
+        Path tempFilePath = Path.of("tasks.csv");
 
-        Task task1 = taskManager.appendTask(new Task("Задача 1", "Описание"));
+        // Создаем экземпляр FileBackedTaskManager
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(Managers.getDefaultHistory(), tempFilePath);
 
-        Task task2 = taskManager.appendTask(new Task("Задача 2", "Описание"));
+        // Добавляем задачи
+        Task task = new Task("Пойти в магазин", "Купить продукты для ужина");
+        taskManager.appendTask(task);
 
+        Epic epic = new Epic("Уборка дома", "Провести генеральную уборку квартиры");
+        taskManager.appendEpic(epic);
 
-        // Создаем Эпик с подзадачами
-        Epic epicWithSubtasks = taskManager.appendEpic(new Epic("Эпик с подзадачами", "Описание"));
+        Subtask subtask1 = new Subtask("Почистить рыбу", "Подготовить рыбу для приготовления ужина", epic.getId());
+        taskManager.appendSubtask(subtask1);
 
-        Subtask subtask1 = taskManager.appendSubtask(new Subtask("Подзадача 1", "Описание", epicWithSubtasks.getId()));
+        Subtask subtask2 = new Subtask("Пропылесосить ковёр", "Пропылесосить все комнаты", epic.getId());
+        taskManager.appendSubtask(subtask2);
 
-        Subtask subtask2 = taskManager.appendSubtask(new Subtask("Подзадача 2", "Описание", epicWithSubtasks.getId()));
+        System.out.println("Initial tasks:");
+        printTasks(taskManager);
 
-        Subtask subtask3 = taskManager.appendSubtask(new Subtask("Подзадача 3", "Описание", epicWithSubtasks.getId()));
+        // Сохраняем данные в файл
+        taskManager.save();
+        System.out.println("Data saved to file.");
 
+        // Загружаем данные из файла
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFilePath.toFile());
+        System.out.println("Data loaded from file:");
 
+        // Проверяем загруженные задачи
+        printTasks(loadedManager);
 
-        Epic epicWithoutSubtasks = taskManager.appendEpic(new Epic("Эпик без подзадач", "Описание"));
-        System.out.println(epicWithoutSubtasks.getId());
+        // Удаляем задачу и подзадачу
+        loadedManager.deleteTask(task.getId());
+        loadedManager.deleteSubtask(subtask1.getId());
 
-        System.out.println("Запросы к задачам:");
-        taskManager.getTaskById(task1.getId());
-        taskManager.getEpicById(epicWithSubtasks.getId());
-        taskManager.getSubtaskById(subtask1.getId());
-        taskManager.getSubtaskById(subtask2.getId());
-        taskManager.getTaskById(task2.getId());
-        taskManager.getEpicById(epicWithoutSubtasks.getId());
-        taskManager.getSubtaskById(subtask3.getId());
+        System.out.println("After deletion:");
+        printTasks(loadedManager);
 
-        System.out.println("История:");
-        printHistory(taskManager);
-        System.out.println("\nУдаляем задачу Задача 1:");
-        taskManager.deleteTask(task1.getId());
-        System.out.println("История:");
-        printHistory(taskManager);
+        // Обновляем эпик
+        Epic updatedEpic = loadedManager.getEpicById(epic.getId());
+        if (updatedEpic != null) {
+            updatedEpic.setName("Генеральная уборка дома");
+            loadedManager.updateEpic(updatedEpic);
+        }
 
-        System.out.println("\nУдаляем эпик с подзадачами:");
-        taskManager.deleteEpic(epicWithSubtasks.getId());
-        System.out.println("История:");
+        System.out.println("After update:");
+        printTasks(loadedManager);
 
-        printHistory(taskManager);
+        // Очищаем все задачи
+        loadedManager.clearTasks();
+        loadedManager.clearEpics();
+        loadedManager.clearSubtasks();
+
+        System.out.println("After clearing all tasks:");
+        printTasks(loadedManager);
     }
 
-    private static void printHistory(TaskManager taskManager) {
-        for (Task task : taskManager.getHistory()) {
-            System.out.println(task);
-        }
+    private static void printTasks(FileBackedTaskManager taskManager) {
+        System.out.println("Tasks: " + taskManager.getAllTasks());
+        System.out.println("Epics: " + taskManager.getAllEpic());
+        System.out.println("Subtasks: " + taskManager.getAllSubtasks());
+        System.out.println();
     }
 }
 

@@ -64,7 +64,7 @@ public class Epic extends Task {
                 }
             }
             if (subtaskToDelete != null) {
-                return  listSubtasks.remove(subtaskToDelete);
+                return listSubtasks.remove(subtaskToDelete);
             }
         }
         return false;
@@ -79,10 +79,14 @@ public class Epic extends Task {
         }
     }
 
-
     @Override
     public void setStatus(StatusTasks status) {
         //Do nothing
+    }
+
+    @Override
+    public TypeTask getType() {
+        return this.type;
     }
 
 }

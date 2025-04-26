@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTaskManagerTest {
@@ -19,8 +18,6 @@ public class InMemoryTaskManagerTest {
         // Инициализация менеджера задач перед каждым тестом
         taskManager = new InMemoryTaskManager(Managers.getDefaultHistory());
     }
-
-
 
     @Test
     void testAddEpicAndSubtasks() {
@@ -45,8 +42,6 @@ public class InMemoryTaskManagerTest {
         assertEquals(2, taskManager.getEpicById(epic.getId()).getListSubtasks().size(),
                 "Подзадачи не были добавлены в список подзадач эпика.");
     }
-
-
 
     @Test
     void testDeleteEpicWithSubtasks() {
@@ -87,8 +82,6 @@ public class InMemoryTaskManagerTest {
         assertTrue(taskManager.getEpicById(epic.getId()).getListSubtasks().isEmpty(),
                 "Подзадача не была удалена из списка подзадач эпика.");
     }
-
-
 
     @Test
     void testClearEpics() {

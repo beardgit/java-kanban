@@ -60,7 +60,7 @@ public class Task {
     }
 
     public TypeTask getType() {
-        return this.type;
+        return type;
     }
 
     public void setId(Integer id) {
