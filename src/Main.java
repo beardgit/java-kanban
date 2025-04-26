@@ -15,7 +15,7 @@ public class Main {
 
         Task task2 = taskManager.appendTask(new Task("Задача 2", "Описание"));
 
-        System.out.println(task2.getId());
+
         // Создаем Эпик с подзадачами
         Epic epicWithSubtasks = taskManager.appendEpic(new Epic("Эпик с подзадачами", "Описание"));
 
@@ -25,13 +25,6 @@ public class Main {
 
         Subtask subtask3 = taskManager.appendSubtask(new Subtask("Подзадача 3", "Описание", epicWithSubtasks.getId()));
 
-        taskManager.deleteEpic(epicWithSubtasks.getId());
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
 
 
         Epic epicWithoutSubtasks = taskManager.appendEpic(new Epic("Эпик без подзадач", "Описание"));

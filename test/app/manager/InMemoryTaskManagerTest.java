@@ -2,6 +2,7 @@ package app.manager;
 
 import app.tasks.Epic;
 import app.tasks.Subtask;
+import app.tasks.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,8 @@ public class InMemoryTaskManagerTest {
         // Инициализация менеджера задач перед каждым тестом
         taskManager = new InMemoryTaskManager(Managers.getDefaultHistory());
     }
+
+
 
     @Test
     void testAddEpicAndSubtasks() {
@@ -42,6 +45,8 @@ public class InMemoryTaskManagerTest {
         assertEquals(2, taskManager.getEpicById(epic.getId()).getListSubtasks().size(),
                 "Подзадачи не были добавлены в список подзадач эпика.");
     }
+
+
 
     @Test
     void testDeleteEpicWithSubtasks() {
@@ -76,12 +81,14 @@ public class InMemoryTaskManagerTest {
         taskManager.deleteSubtask(subtask.getId());
 
         // Проверяем, что подзадача удалена из хранилища
-        assertThrows(IllegalArgumentException.class, () -> taskManager.getSubtaskById(subtask.getId()));
+        assertNull(taskManager.getSubtaskById(subtask.getId()), "Подзадача не была удалена из хранилища.");
 
         // Проверяем, что подзадача удалена из списка подзадач эпика
         assertTrue(taskManager.getEpicById(epic.getId()).getListSubtasks().isEmpty(),
                 "Подзадача не была удалена из списка подзадач эпика.");
     }
+
+
 
     @Test
     void testClearEpics() {
@@ -127,5 +134,25 @@ public class InMemoryTaskManagerTest {
         assertTrue(taskManager.getEpicById(epic.getId()).getListSubtasks().isEmpty(),
                 "Список подзадач эпика не пуст после очистки подзадач.");
     }
+
+    @Test
+    void testDeleteTaskAndHistory() {
+        // Создаем задачу
+        Task task = new Task("Task 1", "Description of Task 1");
+        taskManager.appendTask(task);
+
+        // Добавляем задачу в историю
+        taskManager.getTaskById(task.getId());
+
+        // Проверяем, что задача есть в истории
+        assertFalse(taskManager.getHistory().isEmpty(), "История пуста после добавления задачи.");
+
+        // Удаляем задачу
+        taskManager.deleteTask(task.getId());
+
+        // Проверяем, что задача удалена из истории
+        assertTrue(taskManager.getHistory().isEmpty(), "Задача не была удалена из истории.");
+    }
+
 }
 
