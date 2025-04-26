@@ -26,7 +26,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
 
-    //    Блок сохранения и записи данных
+    //        Блок сохранения и записи данных
     private Map<TypeTask, List<? extends Task>> getAll() {
         System.out.println("get all List Task , Epic , Subtask");
 
@@ -39,10 +39,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return tasksAll;
     }
 
-    private void ss() {
-
-    }
-
+    //     Основной блок реализации класса
     private void save() {
 
         Map<TypeTask, List<? extends Task>> taskData = getAll();
@@ -73,8 +70,43 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     }
 
-//    Блок преобразования
+    public static FileBackedTaskManager loadFromFile(File file) {
 
+        Path pathFile = file.toPath();
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(new InMemoryHistoryManager(), pathFile);
+
+        try {
+            List<String> listAllLines = Files.readAllLines(pathFile);
+
+            for (String str : listAllLines) {
+//             Получаем готовую сущность из строки
+                Task task = fromString(str);
+//            Наполнение у taskManager внутренних коллекций
+                if (task instanceof Subtask) {
+                    fileBackedTaskManager.subtasks.put(task.getId(), (Subtask) task);
+                } else if (task instanceof Epic) {
+                    fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
+                } else {
+                    fileBackedTaskManager.tasks.put(task.getId(), task);
+                }
+//        Связь эпика и подзадачи
+                for (Subtask subtask : fileBackedTaskManager.getAllSubtasks()) {
+//             У текущей сабтаски берем epicId для поика сущности epic в коллекции
+                    Epic epic = fileBackedTaskManager.epics.get(subtask.getEpicId());
+//             Сохраняем во внутренний список сущности epic сабтаску которая содержит id данного эпика
+
+                }
+
+            }
+
+            return fileBackedTaskManager;
+
+        } catch (IOException e) {
+            throw new FileLoadException(e.getMessage());
+        }
+    }
+
+//    Блок преобразования
     private <T extends Task> String stringify(T task) {
         Integer id = task.getId();
         String type = String.valueOf(task.getType());
@@ -92,8 +124,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 epic != null ? epic : "");
     }
 
-    public Task fromString(String str) {
-//        id,type,name,status,description,epic
+    private static Task fromString(String str) {
+//    Ожидаемое считывание из файла  id,type,name,status,description,epic
 
         String[] attributes = str.split(",");
 
@@ -102,22 +134,36 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = attributes[2];
         StatusTasks status = StatusTasks.valueOf(attributes[3]);
         String description = attributes[4];
-        Integer epic = Integer.valueOf(attributes[5]);
+        Integer epicId = Integer.valueOf(attributes[5]);
 
+        Task task;
         switch (type) {
+            case TASK:
+                task = new Task(name, description);
+                task.setId(id);
+                task.setStatus(status);
+                break;
+            case EPIC:
+                task = new Epic(name, description);
+                task.setId(id);
+                task.setStatus(status);
+                break;
             case SUBTASK:
-                Subtask subtask = new Subtask(name, description, id);
-                return null;
+                task = new Subtask(name, description, epicId);
+                task.setStatus(status);
+                break;
+            default:
+                task = null;
         }
 
-        return null;
+        return task;
     }
 
 
     // Блок переопределения методов
     @Override
     public Task deleteTask(Integer id) {
-//        Вначале проводим удаление и сохраняем то что удаляем
+//        Вначале проводим удаление и возвращаем удаляем удаляемую таску
         Task task = super.deleteTask(id);
 //        Проводим полное сохранение
         save();
