@@ -218,10 +218,35 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return epic;
     }
 
+
     @Override
     public Task appendTask(Task newTask) {
         Task task = super.appendTask(newTask);
         save();
         return task;
     }
+
+
+    @Override
+    public boolean clearTasks() {
+        boolean isEmpty = super.clearTasks();
+        save();
+        return isEmpty;
+    }
+
+    @Override
+    public boolean clearEpics() {
+        boolean isEmpty = super.clearEpics();
+        save();
+        return isEmpty;
+    }
+
+    @Override
+    public boolean clearSubtasks() {
+        boolean isEmpty = super.clearSubtasks();
+        save();
+        return isEmpty;
+
+    }
+
 }
