@@ -11,10 +11,7 @@ import app.tasks.Task;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -37,17 +34,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             bufferedWriter.newLine();
 
 //            Итерируемся по всем получаемым задачам из Map / итерация по получаемой коллекции
-            for( Task task : tasks.values()){
+            for (Task task : tasks.values()) {
                 bufferedWriter.write(stringify(task));
                 bufferedWriter.newLine();
             }
 
-            for(Epic epic : epics.values() ){
+            for (Epic epic : epics.values()) {
                 bufferedWriter.write(stringify(epic));
                 bufferedWriter.newLine();
             }
 
-            for(Subtask subtask : subtasks.values()){
+            for (Subtask subtask : subtasks.values()) {
                 bufferedWriter.write(stringify(subtask));
                 bufferedWriter.newLine();
             }
