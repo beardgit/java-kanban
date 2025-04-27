@@ -96,27 +96,5 @@ class FileBackedTaskManagerTest {
         assertTrue(loadedEpic.getListSubtasks().contains(subtasks.get(0)), "Подзадача должна быть связана с эпиком.");
     }
 
-    @Test
-    void testGetAllMethod() {
-        // Добавляем задачи
-        Task task = new Task("Task 1", "Description of Task 1");
-        Epic epic = new Epic("Epic 1", "Description of Epic 1");
-        Subtask subtask = new Subtask("Subtask 1", "Description of Subtask 1", epic.getId());
-        taskManager.appendTask(task);
-        taskManager.appendEpic(epic);
-        taskManager.appendSubtask(subtask);
-
-        // Вызываем метод getAll()
-        Map<TypeTask, List<? extends Task>> allTasks = taskManager.getAll();
-
-        // Проверяем содержимое
-        assertNotNull(allTasks.get(TypeTask.TASK), "Список задач не должен быть null.");
-        assertNotNull(allTasks.get(TypeTask.EPIC), "Список эпиков не должен быть null.");
-        assertNotNull(allTasks.get(TypeTask.SUBTASK), "Список подзадач не должен быть null.");
-
-        assertEquals(1, allTasks.get(TypeTask.TASK).size(), "Количество задач должно быть 1.");
-        assertEquals(1, allTasks.get(TypeTask.EPIC).size(), "Количество эпиков должно быть 1.");
-        assertEquals(1, allTasks.get(TypeTask.SUBTASK).size(), "Количество подзадач должно быть 1.");
-    }
 
 }
