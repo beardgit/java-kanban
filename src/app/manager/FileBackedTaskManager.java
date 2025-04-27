@@ -11,6 +11,7 @@ import app.tasks.Task;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,40 +27,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.filePath = data;
     }
 
-    //        Сохранение всех задач
-    Map<TypeTask, List<? extends Task>> getAll() {
-
-        Map<TypeTask, List<? extends Task>> tasksAll = new HashMap<>();
-
-        tasksAll.put(TypeTask.TASK, getAllTasks());
-        tasksAll.put(TypeTask.EPIC, getAllEpic());
-        tasksAll.put(TypeTask.SUBTASK, getAllSubtasks());
-
-        return tasksAll;
-    }
 
     //     Основной блок реализации класса (Сохранение в файл / Восстановление из файла)
     public void save() {
-
-        Map<TypeTask, List<? extends Task>> taskData = getAll();
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(filePath)) {
 
             bufferedWriter.write(TITLE);
             bufferedWriter.newLine();
 
-            for (Task task : taskData.get(TypeTask.TASK)) {
+//            Итерируемся по всем получаемым задачам из Map / итерация по получаемой коллекции
+            for( Task task : tasks.values()){
                 bufferedWriter.write(stringify(task));
                 bufferedWriter.newLine();
             }
 
-            for (Task task : taskData.get(TypeTask.EPIC)) {
-                bufferedWriter.write(stringify(task));
+            for(Epic epic : epics.values() ){
+                bufferedWriter.write(stringify(epic));
                 bufferedWriter.newLine();
             }
 
-            for (Task task : taskData.get(TypeTask.SUBTASK)) {
-                bufferedWriter.write(stringify(task));
+            for(Subtask subtask : subtasks.values()){
+                bufferedWriter.write(stringify(subtask));
                 bufferedWriter.newLine();
             }
 
@@ -68,6 +57,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
 
     }
+
 
     public static FileBackedTaskManager loadFromFile(File file) {
 
