@@ -63,6 +63,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         Path pathFile = file.toPath();
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(new InMemoryHistoryManager(), pathFile);
+        int maxCountId = 0;
 
         try {
             List<String> listAllLines = Files.readAllLines(pathFile);
@@ -71,35 +72,39 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (str.isEmpty() || str.equals(TITLE)) {
                     continue;
                 }
-
-                //             Получаем готовую сущность из строки
+//                Получаем сущность из строки для наполнения менеджера
                 Task task = fromString(str);
-
+                maxCountId = task.getId() > maxCountId ? task.getId() : maxCountId;
 //            Наполнение у taskManager внутренних коллекций
-                if (task instanceof Subtask) {
+                if (task.getType().equals(TypeTask.SUBTASK)) {
                     fileBackedTaskManager.subtasks.put(task.getId(), (Subtask) task);
-                } else if (task instanceof Epic) {
+                } else if (task.getType().equals(TypeTask.EPIC)) {
                     fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
                 } else {
                     fileBackedTaskManager.tasks.put(task.getId(), task);
                 }
 
             }
-
 //                   Связь эпика и подзадачи
             for (Subtask subtask : fileBackedTaskManager.getAllSubtasks()) {
 //             У текущей сабтаски берем epicId для поиска сущности epic в коллекции
                 Epic epic = fileBackedTaskManager.epics.get(subtask.getEpicId());
+
 //             Сохраняем во внутренний список сущности epic сабтаску которая содержит id данного эпика
                 if (epic != null) {
                     epic.addSubtask(subtask);
                 }
 
             }
+//           Обращение к countId InMemoryTaskManager для установки обновленного счетчика
+            countId = maxCountId + 1;
+
             return fileBackedTaskManager;
+
         } catch (IOException e) {
             throw new FileLoadException("Ошибка метода loadFromFile : ", e);
         }
+
     }
 
     //    Блок преобразования
