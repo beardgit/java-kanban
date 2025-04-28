@@ -19,7 +19,6 @@ class Node {
         return this.prev;
     }
 
-
     public Node getNext() {
         return this.next;
     }

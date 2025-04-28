@@ -1,6 +1,7 @@
 package app.tasks;
 
 import app.enumeration.StatusTasks;
+import app.enumeration.TypeTask;
 
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ public class Task {
     private String name;
     private String description;
     private StatusTasks status = StatusTasks.NEW;
+    private final TypeTask type = TypeTask.TASK;
 
     public Task(Task task) {
         id = task.getId();
@@ -55,6 +57,10 @@ public class Task {
 
     public StatusTasks getStatus() {
         return status;
+    }
+
+    public TypeTask getType() {
+        return type;
     }
 
     public void setId(Integer id) {

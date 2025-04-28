@@ -1,11 +1,15 @@
 package app.tasks;
 
 import app.enumeration.StatusTasks;
+import app.enumeration.TypeTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
+
+    private final TypeTask type = TypeTask.EPIC;
+
     private List<Subtask> listSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
@@ -46,25 +50,22 @@ public class Epic extends Task {
         return statusOne;
     }
 
-    public boolean removeSubtask(Subtask subtask) {
-        return listSubtasks.remove(subtask);
+    public boolean removeSubtask(Integer subtaskId) {
+        return listSubtasks.remove(subtaskId);
     }
 
     public boolean removeSubtaskById(int id) {
         Subtask subtaskToDelete = null;
         if (!listSubtasks.isEmpty()) {
             for (Subtask subtask : listSubtasks) {
-                int idSubtask = subtask.getId();
-                if (idSubtask == id) {
+                if (subtask.getId() == id) {
                     subtaskToDelete = subtask;
                     break;
                 }
             }
             if (subtaskToDelete != null) {
-                listSubtasks.remove(subtaskToDelete);
-                return true;
+                return listSubtasks.remove(subtaskToDelete);
             }
-            return false;
         }
         return false;
     }
@@ -81,6 +82,11 @@ public class Epic extends Task {
     @Override
     public void setStatus(StatusTasks status) {
         //Do nothing
+    }
+
+    @Override
+    public TypeTask getType() {
+        return this.type;
     }
 
 }

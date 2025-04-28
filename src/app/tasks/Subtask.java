@@ -1,22 +1,23 @@
 package app.tasks;
 
 import app.enumeration.StatusTasks;
+import app.enumeration.TypeTask;
 
 public class Subtask extends Task {
-    private Epic epic;
+    private Integer epicId;
+    private final TypeTask type = TypeTask.SUBTASK;
 
-    public Subtask(String name, String description, Epic epic) {
+    public Subtask(String name, String description, Integer epicId) {
         super(name, description);
-        this.epic = epic;
-        epic.addSubtask(this);
+        this.epicId = epicId;
     }
 
-    public Epic getEpic() {
-        return epic;
+    public Integer getEpicId() {
+        return epicId;
     }
 
-    public void setEpic(Epic epic) {
-        this.epic = epic;
+    public void setEpicId(Integer epicId) {
+        this.epicId = epicId;
     }
 
     @Override
@@ -24,4 +25,8 @@ public class Subtask extends Task {
         super.setStatus(status);
     }
 
+    @Override
+    public TypeTask getType() {
+        return this.type;
+    }
 }

@@ -7,88 +7,145 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTaskManagerTest {
 
-    private TaskManager taskManager;
+    private InMemoryTaskManager taskManager;
 
     @BeforeEach
-    void init() {
-        taskManager = Managers.getDefault();
+    void setUp() {
+        // Инициализация менеджера задач перед каждым тестом
+        taskManager = new InMemoryTaskManager(Managers.getDefaultHistory());
     }
 
     @Test
-    void testdAddTask() {
-        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
-        Task task = new Task("Task 1", "Description 1");
+    void testAddEpicAndSubtasks() {
+        // Создаем эпик
+        Epic epic = new Epic("Epic 1", "Description of Epic 1");
+        taskManager.appendEpic(epic);
 
-        manager.appendTask(task);
+        // Проверяем, что эпик добавлен
+        assertNotNull(taskManager.getEpicById(epic.getId()), "Эпик не был добавлен.");
 
-        assertNotNull(manager.getTaskById(task.getId()));
-        assertEquals(1, manager.getAllTasks().size());
-    }
+        // Создаем подзадачи и добавляем их
+        Subtask subtask1 = new Subtask("Subtask 1", "Description of Subtask 1", epic.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description of Subtask 2", epic.getId());
+        taskManager.appendSubtask(subtask1);
+        taskManager.appendSubtask(subtask2);
 
+        // Проверяем, что подзадачи добавлены
+        assertNotNull(taskManager.getSubtaskById(subtask1.getId()), "Подзадача 1 не была добавлена.");
+        assertNotNull(taskManager.getSubtaskById(subtask2.getId()), "Подзадача 2 не была добавлена.");
 
-    @Test
-    void testUpdateTask() {
-        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
-        Task task = new Task("Task 1", "Description 1");
-        manager.appendTask(task);
-
-        Task updatedTask = new Task("Updated Task", "Updated Description");
-        updatedTask.setId(task.getId());
-        manager.updateTask(updatedTask);
-
-        Task retrievedTask = manager.getTaskById(task.getId());
-        assertEquals("Updated Task", retrievedTask.getName());
-    }
-
-    @Test
-    void testClearAllTasks() {
-        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
-        manager.appendTask(new Task("Task 1", "Description 1"));
-        manager.appendTask(new Task("Task 2", "Description 2"));
-
-        boolean isCleared = manager.clearTasks();
-        assertTrue(isCleared);
-        assertTrue(manager.getAllTasks().isEmpty());
+        // Проверяем, что подзадачи добавлены в список подзадач эпика
+        assertEquals(2, taskManager.getEpicById(epic.getId()).getListSubtasks().size(),
+                "Подзадачи не были добавлены в список подзадач эпика.");
     }
 
     @Test
-    void testAddEpicAndSubtask() {
-        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
-        Epic epic = new Epic("Epic 1", "Description 1");
-        manager.appendEpic(epic);
+    void testDeleteEpicWithSubtasks() {
+        // Создаем эпик
+        Epic epic = new Epic("Epic 1", "Description of Epic 1");
+        taskManager.appendEpic(epic);
 
-        Subtask subtask = new Subtask("Subtask 1", "Description 1", epic);
-        manager.appendSubtask(subtask);
+        // Создаем подзадачи и добавляем их
+        Subtask subtask1 = new Subtask("Subtask 1", "Description of Subtask 1", epic.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description of Subtask 2", epic.getId());
+        taskManager.appendSubtask(subtask1);
+        taskManager.appendSubtask(subtask2);
 
-        assertNotNull(manager.getEpicById(epic.getId()));
-        assertNotNull(manager.getSubtaskById(subtask.getId()));
-        assertEquals(1, epic.getListSubtasks().size());
+        // Удаляем эпик
+        taskManager.deleteEpic(epic.getId());
+
+        // Проверяем, что список подзадач эпика пуст
+        assertTrue(taskManager.getAllSubtasks().isEmpty(), "Список подзадач не пуст после удаления эпика.");
     }
-
 
     @Test
-    void testGetHistory() {
-        InMemoryTaskManager manager = new InMemoryTaskManager(new InMemoryHistoryManager());
-        Task task1 = new Task("Task 1", "Description 1");
-        Task task2 = new Task("Task 2", "Description 2");
-        manager.appendTask(task1);
-        manager.appendTask(task2);
+    void testDeleteSubtask() {
+        // Создаем эпик
+        Epic epic = new Epic("Epic 1", "Description of Epic 1");
+        taskManager.appendEpic(epic);
 
-        manager.getTaskById(task1.getId());
-        manager.getTaskById(task2.getId());
+        // Создаем подзадачу и добавляем её
+        Subtask subtask = new Subtask("Subtask 1", "Description of Subtask 1", epic.getId());
+        taskManager.appendSubtask(subtask);
 
-        List<Task> history = manager.getHistory();
-        assertEquals(2, history.size());
-        assertEquals(task1, history.get(0));
-        assertEquals(task2, history.get(1));
+        // Удаляем подзадачу
+        taskManager.deleteSubtask(subtask.getId());
+
+        // Проверяем, что подзадача удалена из хранилища
+        assertNull(taskManager.getSubtaskById(subtask.getId()), "Подзадача не была удалена из хранилища.");
+
+        // Проверяем, что подзадача удалена из списка подзадач эпика
+        assertTrue(taskManager.getEpicById(epic.getId()).getListSubtasks().isEmpty(),
+                "Подзадача не была удалена из списка подзадач эпика.");
     }
 
+    @Test
+    void testClearEpics() {
+        // Создаем эпик
+        Epic epic = new Epic("Epic 1", "Description of Epic 1");
+        taskManager.appendEpic(epic);
+
+        // Создаем подзадачи и добавляем их
+        Subtask subtask1 = new Subtask("Subtask 1", "Description of Subtask 1", epic.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description of Subtask 2", epic.getId());
+        taskManager.appendSubtask(subtask1);
+        taskManager.appendSubtask(subtask2);
+
+        // Очищаем все эпики
+        taskManager.clearEpics();
+
+        // Проверяем, что все эпики удалены
+        assertTrue(taskManager.getAllEpic().isEmpty(), "Список эпиков не пуст после очистки.");
+
+        // Проверяем, что все подзадачи также удалены
+        assertTrue(taskManager.getAllSubtasks().isEmpty(), "Список подзадач не пуст после очистки эпиков.");
+    }
+
+    @Test
+    void testClearSubtasks() {
+        // Создаем эпик
+        Epic epic = new Epic("Epic 1", "Description of Epic 1");
+        taskManager.appendEpic(epic);
+
+        // Создаем подзадачи и добавляем их
+        Subtask subtask1 = new Subtask("Subtask 1", "Description of Subtask 1", epic.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description of Subtask 2", epic.getId());
+        taskManager.appendSubtask(subtask1);
+        taskManager.appendSubtask(subtask2);
+
+        // Очищаем все подзадачи
+        taskManager.clearSubtasks();
+
+        // Проверяем, что все подзадачи удалены
+        assertTrue(taskManager.getAllSubtasks().isEmpty(), "Список подзадач не пуст после очистки.");
+
+        // Проверяем, что список подзадач эпика пуст
+        assertTrue(taskManager.getEpicById(epic.getId()).getListSubtasks().isEmpty(),
+                "Список подзадач эпика не пуст после очистки подзадач.");
+    }
+
+    @Test
+    void testDeleteTaskAndHistory() {
+        // Создаем задачу
+        Task task = new Task("Task 1", "Description of Task 1");
+        taskManager.appendTask(task);
+
+        // Добавляем задачу в историю
+        taskManager.getTaskById(task.getId());
+
+        // Проверяем, что задача есть в истории
+        assertFalse(taskManager.getHistory().isEmpty(), "История пуста после добавления задачи.");
+
+        // Удаляем задачу
+        taskManager.deleteTask(task.getId());
+
+        // Проверяем, что задача удалена из истории
+        assertTrue(taskManager.getHistory().isEmpty(), "Задача не была удалена из истории.");
+    }
 
 }
 
