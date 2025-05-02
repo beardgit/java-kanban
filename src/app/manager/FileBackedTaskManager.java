@@ -62,13 +62,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         Path path = file.toPath();
         FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), path);
 
-
         int maxId = 0;
         try {
             List<String> lines = Files.readAllLines(path);
             for (String line : lines) {
 
-                if (line.trim().isBlank() || line.equals(TITLE)){
+                if (line.trim().isBlank() || line.equals(TITLE)) {
                     continue;
                 }
 
@@ -77,12 +76,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
                 switch (task.getType()) {
 
-                    case TypeTask.TASK : manager.tasks.put(task.getId(), task);
-                    break;
-                    case TypeTask.EPIC: manager.epics.put(task.getId(), (Epic) task);
-                    break;
-                    case TypeTask.SUBTASK : manager.subtasks.put(task.getId(), (Subtask) task);
-                    break;
+                    case TypeTask.TASK:
+                        manager.tasks.put(task.getId(), task);
+                        break;
+                    case TypeTask.EPIC:
+                        manager.epics.put(task.getId(), (Epic) task);
+                        break;
+                    case TypeTask.SUBTASK:
+                        manager.subtasks.put(task.getId(), (Subtask) task);
+                        break;
 
                 }
             }
@@ -114,17 +116,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
         Task task;
-        switch (type){
-            case TypeTask.SUBTASK: task = new Subtask(name, description, epicId, startTime, duration);
-            break;
-            case TypeTask.EPIC: task = new Epic(name, description);
-            break;
-            case TypeTask.TASK : task = new Task(name, description,startTime,duration);
-            break;
-            default: task = null;
+        switch (type) {
+            case TypeTask.SUBTASK:
+                task = new Subtask(name, description, epicId, startTime, duration);
+                break;
+            case TypeTask.EPIC:
+                task = new Epic(name, description);
+                break;
+            case TypeTask.TASK:
+                task = new Task(name, description, startTime, duration);
+                break;
+            default:
+                task = null;
         }
 
-        if(task != null){
+        if (task != null) {
             task.setId(id);
             task.setStatus(status);
         }
