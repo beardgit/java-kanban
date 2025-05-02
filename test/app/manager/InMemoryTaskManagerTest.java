@@ -16,12 +16,12 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @BeforeEach
     public void setUp() {
         // Инициализация менеджера задач перед каждым тестом
-        taskManager = new InMemoryTaskManager(Managers.getDefaultHistory());
+        taskManager = createTaskManager();
     }
 
     @Override
     protected InMemoryTaskManager createTaskManager() {
-        return null;
+        return new InMemoryTaskManager(Managers.getDefaultHistory());
     }
 
     @Test
