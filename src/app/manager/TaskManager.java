@@ -53,5 +53,7 @@ public interface TaskManager {
 
     void deleteSubtask(Integer id);
 
+    List<Task> getPrioritizedTasks();
+
 }
 

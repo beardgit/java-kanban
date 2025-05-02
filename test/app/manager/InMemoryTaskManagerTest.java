@@ -9,14 +9,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InMemoryTaskManagerTest {
+public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager>{
 
     private InMemoryTaskManager taskManager;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         // Инициализация менеджера задач перед каждым тестом
         taskManager = new InMemoryTaskManager(Managers.getDefaultHistory());
+    }
+
+    @Override
+    protected InMemoryTaskManager createTaskManager() {
+        return null;
     }
 
     @Test
