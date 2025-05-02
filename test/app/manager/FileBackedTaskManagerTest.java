@@ -1,6 +1,5 @@
 package app.manager;
 
-import app.enumeration.TypeTask;
 import app.tasks.Epic;
 import app.tasks.Subtask;
 import app.tasks.Task;
@@ -10,91 +9,56 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
-    private FileBackedTaskManager taskManager;
-    private Path tempFilePath;
+    private Path filePath;
 
     @BeforeEach
-    void setUp() throws IOException {
-
-        // Создаем временный файл для тестов
-        File tempFile = File.createTempFile("test", ".csv");
-        tempFilePath = tempFile.toPath();
-        taskManager = new FileBackedTaskManager(Managers.getDefaultHistory(), tempFilePath);
+    void setup() throws IOException {
+        File file = File.createTempFile("test", ".csv");
+        filePath = file.toPath();
+        taskManager = createTaskManager();
     }
 
     @AfterEach
-    void tearDown() throws IOException {
-        // Удаляем временный файл после тестов
-        Files.deleteIfExists(tempFilePath);
+    void cleanup() throws IOException {
+        Files.deleteIfExists(filePath);
     }
 
-    @Test
-    void testSaveAndLoadEmptyFile() {
-        // Проверяем сохранение и загрузку пустого файла
-        taskManager.save();
-
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFilePath.toFile());
-
-        assertTrue(loadedManager.getAllTasks().isEmpty(), "Задачи не должны быть загружены из пустого файла.");
-        assertTrue(loadedManager.getAllEpic().isEmpty(), "Эпики не должны быть загружены из пустого файла.");
-        assertTrue(loadedManager.getAllSubtasks().isEmpty(), "Подзадачи не должны быть загружены из пустого файла.");
-    }
-
-    @Test
-    void testSaveAndLoadSingleTask() {
-        // Добавляем одну задачу
-        Task task = new Task("Task 1", "Description of Task 1");
-        taskManager.appendTask(task);
-
-        // Сохраняем и загружаем
-        taskManager.save();
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFilePath.toFile());
-
-        // Проверяем загруженные данные
-        List<Task> tasks = loadedManager.getAllTasks();
-        assertEquals(1, tasks.size(), "Должна быть загружена одна задача.");
-        assertEquals("Task 1", tasks.get(0).getName(), "Название задачи должно совпадать.");
-        assertEquals("Description of Task 1", tasks.get(0).getDescription(), "Описание задачи должно совпадать.");
+    @Override
+    protected FileBackedTaskManager createTaskManager() {
+        return new FileBackedTaskManager(Managers.getDefaultHistory(), filePath);
     }
 
     @Test
     void testSaveAndLoadEpicWithSubtask() {
-        // Добавляем эпик и подзадачу
-        Epic epic = new Epic("Epic 1", "Description of Epic 1");
-        taskManager.appendEpic(epic);
-        Subtask subtask = new Subtask("Subtask 1", "Description of Subtask 1", epic.getId());
-        taskManager.appendSubtask(subtask);
-
-
-        // Сохраняем и загружаем
+        Epic epic = taskManager.appendEpic(new Epic("E", "D"));
+        Subtask sub = taskManager.appendSubtask(new Subtask("S", "D", epic.getId()));
         taskManager.save();
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFilePath.toFile());
 
-        // Проверяем загруженные данные
-        List<Epic> epics = loadedManager.getAllEpic();
-        List<Subtask> subtasks = loadedManager.getAllSubtasks();
+        FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(filePath.toFile());
 
-        assertEquals(1, epics.size(), "Должен быть загружен один эпик.");
-        assertEquals(1, subtasks.size(), "Должна быть загружена одна подзадача.");
-
-        assertEquals("Epic 1", epics.get(0).getName(), "Название эпика должно совпадать.");
-        assertEquals("Description of Epic 1", epics.get(0).getDescription(), "Описание эпика должно совпадать.");
-
-        assertEquals("Subtask 1", subtasks.get(0).getName(), "Название подзадачи должно совпадать.");
-        assertEquals("Description of Subtask 1", subtasks.get(0).getDescription(), "Описание подзадачи должно совпадать.");
-        assertEquals(epic.getId(), subtasks.get(0).getEpicId(), "ID эпика подзадачи должен совпадать.");
-
-        // Проверяем связь между эпиком и подзадачей
-        Epic loadedEpic = epics.get(0);
-        assertTrue(loadedEpic.getListSubtasks().contains(subtasks.get(0)), "Подзадача должна быть связана с эпиком.");
+        assertEquals(1, loaded.getAllEpic().size());
+        assertEquals(1, loaded.getAllSubtasks().size());
+        assertTrue(loaded.getEpicById(epic.getId()).getListSubtasks().stream()
+                .anyMatch(s -> s.getId().equals(sub.getId())));
     }
 
+    @Test
+    void testFileSaveException() {
+        FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(),
+                Path.of("/invalid/path/tasks.csv"));
+        Task task = new Task("Bad", "Path");
+        assertThrows(RuntimeException.class, () -> manager.appendTask(task));
+    }
 
+    @Test
+    void testFileLoadException() {
+        File file = new File("/invalid/path/data.csv");
+        assertThrows(RuntimeException.class, () -> FileBackedTaskManager.loadFromFile(file));
+    }
 }
