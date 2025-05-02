@@ -3,6 +3,9 @@ package app.tasks;
 import app.enumeration.StatusTasks;
 import app.enumeration.TypeTask;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class Subtask extends Task {
     private Integer epicId;
     private final TypeTask type = TypeTask.SUBTASK;
@@ -11,6 +14,12 @@ public class Subtask extends Task {
         super(name, description);
         this.epicId = epicId;
     }
+
+    public Subtask(String name, String description, Integer epicId,  Duration duration, Instant startTime ) {
+        super(name, description,duration, startTime);
+        this.epicId = epicId;
+    }
+
 
     public Integer getEpicId() {
         return epicId;
@@ -29,4 +38,5 @@ public class Subtask extends Task {
     public TypeTask getType() {
         return this.type;
     }
+
 }
