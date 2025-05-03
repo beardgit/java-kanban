@@ -10,7 +10,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node head;
     private Node tail;
 
-
     //  Хранение истории в Map
     private final Map<Integer, Node> historyMap = new HashMap<>();
 

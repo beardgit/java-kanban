@@ -3,14 +3,16 @@ package app.tasks;
 import app.enumeration.StatusTasks;
 import app.enumeration.TypeTask;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Epic extends Task {
 
     private final TypeTask type = TypeTask.EPIC;
-
-    private List<Subtask> listSubtasks = new ArrayList<>();
+    private final List<Subtask> listSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
@@ -24,69 +26,61 @@ public class Epic extends Task {
         return listSubtasks.add(subtask);
     }
 
-    @Override
-    public StatusTasks getStatus() {
-        if (this.getListSubtasks().isEmpty()) {
-            return StatusTasks.NEW;
-        }
-
-        StatusTasks statusOne = StatusTasks.NEW;
-        List<Subtask> listSubtasks = this.getListSubtasks();
-
-        for (int i = 0; i < listSubtasks.size(); i++) {
-            if (i == 0) {
-                statusOne = listSubtasks.get(i).getStatus();
-                if (statusOne == StatusTasks.IN_PROGRESS) {
-                    break;
-                }
-            } else {
-                if (statusOne != listSubtasks.get(i).getStatus()) {
-                    statusOne = StatusTasks.IN_PROGRESS;
-                    break;
-                }
-            }
-        }
-
-        return statusOne;
-    }
-
-    public boolean removeSubtask(Integer subtaskId) {
-        return listSubtasks.remove(subtaskId);
-    }
-
     public boolean removeSubtaskById(int id) {
-        Subtask subtaskToDelete = null;
-        if (!listSubtasks.isEmpty()) {
-            for (Subtask subtask : listSubtasks) {
-                if (subtask.getId() == id) {
-                    subtaskToDelete = subtask;
-                    break;
-                }
-            }
-            if (subtaskToDelete != null) {
-                return listSubtasks.remove(subtaskToDelete);
-            }
-        }
-        return false;
+        return listSubtasks.removeIf(subtask -> Objects.equals(subtask.getId(), id));
     }
 
     public boolean clearSubtasks() {
-        if (listSubtasks.isEmpty()) {
-            return false;
-        } else {
-            listSubtasks.clear();
-            return true;
-        }
+        if (listSubtasks.isEmpty()) return false;
+        listSubtasks.clear();
+        return true;
     }
 
     @Override
-    public void setStatus(StatusTasks status) {
-        //Do nothing
+    public StatusTasks getStatus() {
+        if (listSubtasks.isEmpty()) return StatusTasks.NEW;
+
+        boolean allNew = true;
+        boolean allDone = true;
+
+        for (Subtask sub : listSubtasks) {
+            if (sub.getStatus() != StatusTasks.NEW) allNew = false;
+            if (sub.getStatus() != StatusTasks.DONE) allDone = false;
+        }
+
+        if (allDone) return StatusTasks.DONE;
+        if (allNew) return StatusTasks.NEW;
+        return StatusTasks.IN_PROGRESS;
+    }
+
+    @Override
+    public Duration getDuration() {
+        return listSubtasks.stream()
+                .filter(s -> s.getDuration() != null)
+                .map(Subtask::getDuration)
+                .reduce(Duration.ZERO, Duration::plus);
+    }
+
+    @Override
+    public Instant getStartTime() {
+        return listSubtasks.stream()
+                .map(Subtask::getStartTime)
+                .filter(Objects::nonNull)
+                .min(Instant::compareTo)
+                .orElse(null);
+    }
+
+    @Override
+    public Instant getEndTime() {
+        return listSubtasks.stream()
+                .map(Subtask::getEndTime)
+                .filter(Objects::nonNull)
+                .max(Instant::compareTo)
+                .orElse(null);
     }
 
     @Override
     public TypeTask getType() {
         return this.type;
     }
-
 }
