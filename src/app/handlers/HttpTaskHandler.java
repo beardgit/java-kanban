@@ -1,5 +1,6 @@
 package app.handlers;
 
+import app.enumeration.TypeTask;
 import app.manager.TaskManager;
 import app.tasks.Task;
 import com.google.gson.Gson;
@@ -11,10 +12,10 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class HttpTaskHandler extends BaseHttpHandler  {
+public class HttpTaskHandler extends BaseHttpHandler {
 
-    private TaskManager taskManager;
-    private Gson jsonMapper;
+    private final TaskManager taskManager;
+    private final Gson jsonMapper;
 
     public HttpTaskHandler(TaskManager manager, Gson jsonMapper) {
         this.taskManager = manager;
@@ -23,32 +24,36 @@ public class HttpTaskHandler extends BaseHttpHandler  {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        System.out.println("Отработано!");
-        exchange.sendResponseHeaders(200, 0);
-//      Понять что нужно сделать полльзователь (по http методу)
-        String method = exchange.getRequestMethod();
+        try {
+            String method = exchange.getRequestMethod();
 
-        switch (method) {
-            case "GET":
-                URI requestUri = exchange.getRequestURI();
-                String path = requestUri.getPath();
-                String[] urlParts = path.split("/");
-                if (urlParts.length == 3) { // получение по id
+            switch (method) {
+                case "GET":
+                    URI requestUri = exchange.getRequestURI();
+                    String path = requestUri.getPath();
+                    String[] urlParts = path.split("/");
+//                if (urlParts.length == 3) { // получение по id
+//return;
+//                }
+                    if (urlParts.length == 2) {//получение всех задач
 
-                }
-                if (urlParts.length == 2) {//получение всех задач
-                    List<Task> allTasks = taskManager.getAllTasks();
-                    String jsonString = jsonMapper.toJson(allTasks);
+                        List<Task> allTasks = taskManager.getAllTasks();
+                        String jsonString = jsonMapper.toJson(allTasks);
+                        System.out.println("123");
+                        sendText(exchange, jsonString);
 
-                }
-                break;
-            case "POST":
-                break;
-            case "DELETE":
-                break;
-            default:
+                    }
+                    break;
+                case "POST":
+                    break;
+                case "DELETE":
+                    break;
+                default:
 
 
+            }
+        }catch (Exception e){
+            System.out.println("Ошибка обработки запроса " + e.getMessage());
         }
 
 
