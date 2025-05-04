@@ -1,5 +1,6 @@
 package app.manager;
 
+import app.exception.TaskNitFoundException;
 import app.tasks.Epic;
 import app.tasks.Subtask;
 import app.tasks.Task;
@@ -102,6 +103,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(Integer id) {
         Task task = tasks.get(id);
+        if (task == null) {
+            String errorMessage = String.format("задача с id %d не найдена", id);
+            throw new TaskNitFoundException(errorMessage);
+        }
         historyManager.addToHistory(task);
         return task;
     }

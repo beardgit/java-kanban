@@ -23,14 +23,14 @@ public class Main {
             Gson jsonMapper = new GsonBuilder()
                     .registerTypeAdapter(Duration.class, new DurationAdapter())
                     .registerTypeAdapter(Instant.class, new InstantAdapter())
-//                    .serializeNulls()
+                    .serializeNulls()
                     .create();
 
             TaskManager manager = Managers.getDefault();
             manager.appendTask(new Task("Реализовать эндпоинты", "ABC"));
             manager.appendTask(new Task("Запустить сервер", "CDE"));
 
-System.out.println(manager.getAllTasks());
+            System.out.println(manager.getAllTasks());
 
             server.createContext("/tasks", new HttpTaskHandler(manager, jsonMapper));
             server.start();
