@@ -5,7 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 
-public class HttpPrioritizedHandler implements HttpHandler {
+public class HttpPrioritizedHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         System.out.println("Обработчик Prioritized!");

@@ -5,7 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 
-public class HttpSubtaskHandler implements HttpHandler {
+public class HttpSubtaskHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         System.out.println("Обработчик Subtask!");

@@ -11,7 +11,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class HttpTaskHandler implements HttpHandler {
+public class HttpTaskHandler extends BaseHttpHandler  {
 
     private TaskManager taskManager;
     private Gson jsonMapper;
