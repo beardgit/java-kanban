@@ -4,6 +4,7 @@ import app.exception.ErrorResponse;
 import app.exception.TaskNitFoundException;
 import app.manager.TaskManager;
 import app.tasks.Epic;
+import app.tasks.Subtask;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -60,7 +61,7 @@ public class HttpEpicHandler extends BaseHttpHandler {
 
     }
 
-    private void  handleDelete(HttpExchange exchange) throws  IOException{
+    private void handleDelete(HttpExchange exchange) throws IOException {
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
@@ -73,7 +74,7 @@ public class HttpEpicHandler extends BaseHttpHandler {
 
     }
 
-    private void  handlePost(HttpExchange exchange)throws  IOException{
+    private void handlePost(HttpExchange exchange) throws IOException {
         byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
         String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
         Epic appendEpic = jsonMapper.fromJson(bodyString, Epic.class);
@@ -82,11 +83,19 @@ public class HttpEpicHandler extends BaseHttpHandler {
         sendText(exchange, stringJson, 201);
     }
 
-    private void handleGet(HttpExchange exchange)throws  IOException{
+    private void handleGet(HttpExchange exchange) throws IOException {
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
 
+        if (urlParts.length == 4 && urlParts[3].equals("subtasks")) { // получение по id
+            Integer id = Integer.valueOf(urlParts[2]);
+            Epic epicById = taskManager.getEpicById(id);
+            List<Subtask> listSubtasksByEpic = epicById.getListSubtasks();
+            String stringJson = jsonMapper.toJson(epicById);
+            String stringListSubtaskByEpic = jsonMapper.toJson(listSubtasksByEpic);
+            sendText(exchange, String.format("%s\n %s", stringJson, stringListSubtaskByEpic), 200);
+        }
         if (urlParts.length == 3) { // получение по id
             Integer id = Integer.valueOf(urlParts[2]);
             Epic taskById = taskManager.getEpicById(id);

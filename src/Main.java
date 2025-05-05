@@ -1,6 +1,8 @@
 import app.adapter.DurationAdapter;
 import app.adapter.InstantAdapter;
 import app.handlers.*;
+import app.manager.FileBackedTaskManager;
+import app.manager.HistoryManager;
 import app.manager.Managers;
 import app.manager.TaskManager;
 import app.tasks.Task;
@@ -8,32 +10,42 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
 
 public class Main {
+
+    private static final File FILE_PATH = new File("tasks.csv");  // Файл для сохранения данных
+
     public static void main(String[] args) {
 
-        InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
         try {
-            HttpServer server = HttpServer.create(address, 0);
+
+            TaskManager manager;
+            if (Files.exists(FILE_PATH.toPath())) {
+                manager = FileBackedTaskManager.loadFromFile(FILE_PATH);
+            } else {
+                HistoryManager historyManager = Managers.getDefaultHistory();
+                manager = new FileBackedTaskManager(historyManager, FILE_PATH.toPath());
+            }
+
             Gson jsonMapper = new GsonBuilder()
                     .registerTypeAdapter(Duration.class, new DurationAdapter())
                     .registerTypeAdapter(Instant.class, new InstantAdapter())
-//                    .serializeNulls()
                     .create();
 
-            TaskManager manager = Managers.getDefault();
-            manager.appendTask(new Task("Реализовать эндпоинты", "ABC"));
-            manager.appendTask(new Task("Запустить сервер", "CDE"));
+            InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
+            HttpServer server = HttpServer.create(address, 0);
 
             server.createContext("/tasks", new HttpTaskHandler(manager, jsonMapper));
             server.createContext("/epics", new HttpEpicHandler(manager, jsonMapper));
             server.createContext("/subtasks", new HttpSubtaskHandler(manager, jsonMapper));
             server.createContext("/prioritized", new HttpPrioritizedHandler(manager, jsonMapper));
-            server.createContext("/history", new HttpHistoryHandler(jsonMapper));
+            server.createContext("/history", new HttpHistoryHandler(manager, jsonMapper));
 
             server.start();
 

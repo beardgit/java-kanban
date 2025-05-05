@@ -68,15 +68,22 @@ public class HttpTaskHandler extends BaseHttpHandler {
             Integer idTask = Integer.parseInt(urlParts[2]);
             Task removeTask = taskManager.deleteTask(idTask);
             String jsonString = jsonMapper.toJson(removeTask);
-            sendText(exchange, String.format("Задача:\n %s \n успешно удалена", jsonString), 200);
+            sendText(exchange, String.format("Удаленная задача:\n %s ", jsonString), 200);
         }
     }
 
     private void handlePost(HttpExchange exchange) throws IOException {
+        // task  для дальнейшего распределения (id есть обновляем / id нет добавляем)
+        Task task;
         byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
         String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
-        Task appendTask = jsonMapper.fromJson(bodyString, Task.class);
-        Task task = taskManager.appendTask(appendTask);
+
+        task = jsonMapper.fromJson(bodyString, Task.class);
+        if(task.getId() != null){
+            task = taskManager.updateTask(task);
+        }else {
+            task = taskManager.appendTask(task);
+        }
         String stringJson = jsonMapper.toJson(task);
         sendText(exchange, stringJson, 201);
     }

@@ -30,7 +30,7 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
 
             switch (method) {
                 case "GET":
-                    handleGet(exchange);
+                    this.handleGet(exchange);
                     break;
                 case "POST":
                     handlePost(exchange);
@@ -87,6 +87,7 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
+        System.out.println(urlParts.length);
 
         if (urlParts.length == 3) { // получение по id
             Integer id = Integer.valueOf(urlParts[2]);
