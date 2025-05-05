@@ -94,13 +94,13 @@ public class HttpTaskHandler extends BaseHttpHandler {
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
 
-        if (urlParts.length == 3) { // получение по id
+        if (urlParts.length == 3) {
             Integer id = Integer.valueOf(urlParts[2]);
             Task taskById = taskManager.getTaskById(id);
             String stringJson = jsonMapper.toJson(taskById);
             sendText(exchange, stringJson, 200);
         }
-        if (urlParts.length == 2) {//получение всех задач
+        if (urlParts.length == 2) {
             List<Task> allTasks = taskManager.getAllTasks();
             String jsonString = jsonMapper.toJson(allTasks);
             sendText(exchange, jsonString, 200);

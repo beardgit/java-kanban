@@ -46,6 +46,7 @@ public class HttpEpicHandler extends BaseHttpHandler {
                     break;
 
             }
+
         } catch (TaskNitFoundException e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
@@ -89,7 +90,7 @@ public class HttpEpicHandler extends BaseHttpHandler {
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
 
-        if (urlParts.length == 4 && urlParts[3].equals("subtasks")) { // получение по id
+        if (urlParts.length == 4 && urlParts[3].equals("subtasks")) {
             Integer id = Integer.valueOf(urlParts[2]);
             Epic epicById = taskManager.getEpicById(id);
             List<Subtask> listSubtasksByEpic = epicById.getListSubtasks();
@@ -97,14 +98,14 @@ public class HttpEpicHandler extends BaseHttpHandler {
             sendText(exchange, stringListSubtaskByEpic, 200);
         }
 
-        if (urlParts.length == 3) { // получение по id
+        if (urlParts.length == 3) {
             Integer id = Integer.valueOf(urlParts[2]);
             Epic taskById = taskManager.getEpicById(id);
             String stringJson = jsonMapper.toJson(taskById);
             sendText(exchange, stringJson, 200);
         }
 
-        if (urlParts.length == 2) {//получение всех задач
+        if (urlParts.length == 2) {
             List<Epic> allEpic = taskManager.getAllEpic();
             String jsonString = jsonMapper.toJson(allEpic);
             sendText(exchange, jsonString, 200);
