@@ -246,9 +246,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new TaskNitFoundException(errorMessage);
         }
         Epic epic = epics.get(subtask.getEpicId());
-        if (epic != null) {
-            epic.removeSubtaskById(id);
-        }
+        epic.removeSubtaskById(id);
         prioritizedTasks.remove(subtask);
         historyManager.removeFromHistory(subtask);
 

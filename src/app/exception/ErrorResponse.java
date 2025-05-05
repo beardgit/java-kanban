@@ -1,14 +1,43 @@
 package app.exception;
 
-public class ErrorResponse {
+public class ErrorResponse extends RuntimeException {
     private String errorMessage;
     private Integer errorCode;
-    private String url;
+    private String path;
 
-    public ErrorResponse(String errorMessage, Integer errorCode, String url) {
+
+    public ErrorResponse(String errorMessage, Integer errorCode, String path) {
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
-        this.url = url;
+        this.path = path;
+    }
+
+    public ErrorResponse(String message, String errorMessage, Integer errorCode, String path) {
+        super(message);
+        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
+        this.path = path;
+    }
+
+    public ErrorResponse(String message, Throwable cause, String errorMessage, Integer errorCode, String path) {
+        super(message, cause);
+        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
+        this.path = path;
+    }
+
+    public ErrorResponse(Throwable cause, String errorMessage, Integer errorCode, String path) {
+        super(cause);
+        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
+        this.path = path;
+    }
+
+    public ErrorResponse(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, String errorMessage, Integer errorCode, String path) {
+        super(message, cause, enableSuppression, writableStackTrace);
+        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
+        this.path = path;
     }
 
     public String getErrorMessage() {
@@ -27,11 +56,11 @@ public class ErrorResponse {
         this.errorCode = errorCode;
     }
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setPath(String path) {
+        this.path = path;
     }
 }

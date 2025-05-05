@@ -5,6 +5,7 @@ import app.manager.TaskManager;
 import app.tasks.Task;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -42,4 +43,5 @@ public class HttpPrioritizedHandler extends BaseHttpHandler {
         String response = jsonMapper.toJson(new ErrorResponse(message, code, exchange.getRequestURI().getPath()));
         sendText(exchange, response, code);
     }
+
 }

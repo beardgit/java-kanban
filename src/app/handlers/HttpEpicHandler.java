@@ -92,7 +92,7 @@ public class HttpEpicHandler extends BaseHttpHandler {
             Epic epicById = taskManager.getEpicById(id);
             List<Subtask> listSubtasksByEpic = epicById.getListSubtasks();
             String stringListSubtaskByEpic = jsonMapper.toJson(listSubtasksByEpic);
-            sendText(exchange,  stringListSubtaskByEpic, 200);
+            sendText(exchange, stringListSubtaskByEpic, 200);
         }
         if (urlParts.length == 3) { // получение по id
             Integer id = Integer.valueOf(urlParts[2]);
@@ -106,6 +106,5 @@ public class HttpEpicHandler extends BaseHttpHandler {
             sendText(exchange, jsonString, 200);
         }
     }
-
 
 }

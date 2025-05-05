@@ -24,6 +24,7 @@ public class HttpTaskHandler extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
         try {
             String method = exchange.getRequestMethod();
 
@@ -44,6 +45,7 @@ public class HttpTaskHandler extends BaseHttpHandler {
                     break;
 
             }
+
         } catch (TaskNitFoundException e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
@@ -55,7 +57,6 @@ public class HttpTaskHandler extends BaseHttpHandler {
         } finally {
             exchange.close();
         }
-
 
     }
 
@@ -79,9 +80,9 @@ public class HttpTaskHandler extends BaseHttpHandler {
         String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
 
         task = jsonMapper.fromJson(bodyString, Task.class);
-        if(task.getId() != null){
+        if (task.getId() != null) {
             task = taskManager.updateTask(task);
-        }else {
+        } else {
             task = taskManager.appendTask(task);
         }
         String stringJson = jsonMapper.toJson(task);

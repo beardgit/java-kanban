@@ -2,7 +2,6 @@ package app.tasks;
 
 import app.enumeration.StatusTasks;
 import app.enumeration.TypeTask;
-import com.google.gson.annotations.SerializedName;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -89,24 +88,8 @@ public class Task {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public void setStatus(StatusTasks status) {
         this.status = status;
-    }
-
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
-    public void setStartTime(Instant startTime) {
-        this.startTime = startTime;
     }
 
     @Override
@@ -130,6 +113,7 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", type=" + getType() +
                 ", startTime='" + startTime + '\'' +
                 ", duration='" + duration + '\'' +
                 ", endTime='" + getEndTime() + '\'' +

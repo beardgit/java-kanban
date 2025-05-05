@@ -47,7 +47,7 @@ public class Main {
             manager.appendSubtask(subtask1);
             manager.appendSubtask(subtask2);
 
-
+            //Настраиваем Gson
             Gson jsonMapper = new GsonBuilder()
                     .registerTypeAdapter(Duration.class, new DurationAdapter())
                     .registerTypeAdapter(Instant.class, new InstantAdapter())
@@ -64,12 +64,12 @@ public class Main {
 
             server.start();
 
+            server.stop(300);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
-
         }
 
-
     }
+
 }

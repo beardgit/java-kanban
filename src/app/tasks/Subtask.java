@@ -2,7 +2,6 @@ package app.tasks;
 
 import app.enumeration.StatusTasks;
 import app.enumeration.TypeTask;
-import com.google.gson.annotations.SerializedName;
 
 import java.time.Duration;
 import java.time.Instant;

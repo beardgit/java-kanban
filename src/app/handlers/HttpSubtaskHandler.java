@@ -1,6 +1,5 @@
 package app.handlers;
 
-
 import app.exception.ErrorResponse;
 import app.exception.TaskNitFoundException;
 import app.manager.TaskManager;
@@ -25,6 +24,7 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
         try {
             String method = exchange.getRequestMethod();
 
@@ -59,32 +59,31 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
             exchange.close();
         }
 
-
     }
 
-    private void  handleDelete(HttpExchange exchange)throws  IOException{
+    private void handleDelete(HttpExchange exchange) throws IOException {
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
         if (urlParts.length == 3) {
             Integer idSubtask = Integer.parseInt(urlParts[2]);
             Subtask removeSubtask = taskManager.deleteSubtask(idSubtask);
-            String jsonString = jsonMapper.toJson(removeSubtask);
+            String jsonString = jsonMapper.toJson(idSubtask);
             sendText(exchange, String.format("Задача:\n %s \n успешно удалена", jsonString), 200);
         }
     }
 
-    private void  handlePost(HttpExchange exchange)throws  IOException{
+    private void handlePost(HttpExchange exchange) throws IOException {
         byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
         String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
         Subtask subtask = jsonMapper.fromJson(bodyString, Subtask.class);
-        if(subtask.getId() == null)  taskManager.appendSubtask(subtask);
-        if(subtask.getId() != null) taskManager.updateSubtask(subtask);
+        if (subtask.getId() == null) taskManager.appendSubtask(subtask);
+        if (subtask.getId() != null) taskManager.updateSubtask(subtask);
         String stringJson = jsonMapper.toJson(subtask);
         sendText(exchange, stringJson, 201);
     }
 
-    private void handleGet(HttpExchange exchange)throws  IOException{
+    private void handleGet(HttpExchange exchange) throws IOException {
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
