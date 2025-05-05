@@ -114,6 +114,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(Integer id) {
         Epic epic = epics.get(id);
+        if (epic == null) {
+            String errorMessage = String.format("задача с id %d не найдена", id);
+            throw new TaskNitFoundException(errorMessage);
+        }
         historyManager.addToHistory(epic);
         return epic;
     }
@@ -121,6 +125,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask getSubtaskById(Integer id) {
         Subtask subtask = subtasks.get(id);
+        if (subtask == null) {
+            String errorMessage = String.format("задача с id %d не найдена", id);
+            throw new TaskNitFoundException(errorMessage);
+        }
         historyManager.addToHistory(subtask);
         return subtask;
     }
@@ -205,35 +213,45 @@ public class InMemoryTaskManager implements TaskManager {
             prioritizedTasks.remove(task);
             historyManager.removeFromHistory(task);
         }
+        if (task == null) {
+            String errorMessage = String.format("задача с id %d не найдена", id);
+            throw new TaskNitFoundException(errorMessage);
+        }
+
         return task;
     }
 
     @Override
     public Epic deleteEpic(Integer id) {
         Epic epic = epics.remove(id);
-        if (epic != null) {
-            prioritizedTasks.remove(epic);
-            for (Subtask sub : new ArrayList<>(subtasks.values())) {
-                if (Objects.equals(sub.getEpicId(), id)) {
-                    deleteSubtask(sub.getId());
-                }
-            }
-            historyManager.removeFromHistory(epic);
+        if (epic == null) {
+            String errorMessage = String.format("задача с id %d не найдена", id);
+            throw new TaskNitFoundException(errorMessage);
         }
+        prioritizedTasks.remove(epic);
+        for (Subtask sub : new ArrayList<>(subtasks.values())) {
+            if (Objects.equals(sub.getEpicId(), id)) {
+                deleteSubtask(sub.getId());
+            }
+        }
+        historyManager.removeFromHistory(epic);
         return epic;
     }
 
     @Override
     public Subtask deleteSubtask(Integer id) {
         Subtask subtask = subtasks.remove(id);
-        if (subtask != null) {
-            Epic epic = epics.get(subtask.getEpicId());
-            if (epic != null) {
-                epic.removeSubtaskById(id);
-            }
-            prioritizedTasks.remove(subtask);
-            historyManager.removeFromHistory(subtask);
+        if (subtask == null) {
+            String errorMessage = String.format("задача с id %d не найдена", id);
+            throw new TaskNitFoundException(errorMessage);
         }
+        Epic epic = epics.get(subtask.getEpicId());
+        if (epic != null) {
+            epic.removeSubtaskById(id);
+        }
+        prioritizedTasks.remove(subtask);
+        historyManager.removeFromHistory(subtask);
+
         return subtask;
     }
 

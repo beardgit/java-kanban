@@ -70,6 +70,7 @@ public class HttpTaskHandler extends BaseHttpHandler {
             String jsonString = jsonMapper.toJson(removeTask);
             sendText(exchange, String.format("Удаленная задача:\n %s ", jsonString), 200);
         }
+
     }
 
     private void handlePost(HttpExchange exchange) throws IOException {
