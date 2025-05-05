@@ -78,8 +78,8 @@ public class HttpEpicHandler extends BaseHttpHandler {
         byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
         String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
         Epic appendEpic = jsonMapper.fromJson(bodyString, Epic.class);
-        Epic task = taskManager.appendEpic(appendEpic);
-        String stringJson = jsonMapper.toJson(task);
+        Epic epic = taskManager.appendEpic(appendEpic);
+        String stringJson = jsonMapper.toJson(epic);
         sendText(exchange, stringJson, 201);
     }
 

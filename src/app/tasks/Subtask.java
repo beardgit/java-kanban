@@ -2,13 +2,15 @@ package app.tasks;
 
 import app.enumeration.StatusTasks;
 import app.enumeration.TypeTask;
+import com.google.gson.annotations.SerializedName;
 
 import java.time.Duration;
 import java.time.Instant;
 
 public class Subtask extends Task {
+
     private Integer epicId;
-    private final TypeTask type = TypeTask.SUBTASK;
+
 
     public Subtask(String name, String description, Integer epicId) {
         super(name, description);
@@ -35,6 +37,6 @@ public class Subtask extends Task {
 
     @Override
     public TypeTask getType() {
-        return this.type;
+        return TypeTask.SUBTASK;
     }
 }

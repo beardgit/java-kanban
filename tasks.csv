@@ -1,3 +1,4 @@
 id,type,name,status,description,epic,startTime,duration,endTime
-6,TASK,Реализовать эндпsнт,NEW,ABC,,,,
-8,TASK,Реализовать эндпsнт,NEW,ABC,,,,
+2,EPIC,Эпик 1,NEW,Описание эпика 1,,,PT0S,
+4,EPIC,Эпик 1,NEW,Описание эпика 1,,,PT0S,
+6,EPIC,Эпик 1,NEW,Описание эпика 1,,,PT0S,

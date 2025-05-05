@@ -2,17 +2,18 @@ package app.tasks;
 
 import app.enumeration.StatusTasks;
 import app.enumeration.TypeTask;
+import com.google.gson.annotations.SerializedName;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
 public class Task {
+
     private Integer id;
     private String name;
     private String description;
     private StatusTasks status = StatusTasks.NEW;
-    private final TypeTask type = TypeTask.TASK;
     private Duration duration;
     private Instant startTime;
 
@@ -68,7 +69,7 @@ public class Task {
     }
 
     public TypeTask getType() {
-        return type;
+        return TypeTask.TASK;
     }
 
     public Duration getDuration() {

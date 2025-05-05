@@ -77,8 +77,9 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
     private void  handlePost(HttpExchange exchange)throws  IOException{
         byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
         String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
-        Subtask appendSubtask = jsonMapper.fromJson(bodyString, Subtask.class);
-        Subtask subtask = taskManager.appendSubtask(appendSubtask);
+        Subtask subtask = jsonMapper.fromJson(bodyString, Subtask.class);
+        if(subtask.getId() == null)  taskManager.appendSubtask(subtask);
+        if(subtask.getId() != null) taskManager.updateSubtask(subtask);
         String stringJson = jsonMapper.toJson(subtask);
         sendText(exchange, stringJson, 201);
     }
@@ -87,7 +88,6 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
-        System.out.println(urlParts.length);
 
         if (urlParts.length == 3) { // получение по id
             Integer id = Integer.valueOf(urlParts[2]);
@@ -97,6 +97,7 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
         }
         if (urlParts.length == 2) {//получение всех задач
             List<Subtask> allSubtask = taskManager.getAllSubtasks();
+            System.out.println(allSubtask);
             String jsonString = jsonMapper.toJson(allSubtask);
             sendText(exchange, jsonString, 200);
         }
