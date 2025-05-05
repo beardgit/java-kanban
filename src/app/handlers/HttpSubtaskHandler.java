@@ -88,7 +88,7 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
 
-        if (urlParts.length == 3) { // получение по id
+        if (urlParts.length == 3) {
             Integer id = Integer.valueOf(urlParts[2]);
             Subtask subtaskById = taskManager.getSubtaskById(id);
             String stringJson = jsonMapper.toJson(subtaskById);
@@ -100,6 +100,7 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
             String jsonString = jsonMapper.toJson(allSubtask);
             sendText(exchange, jsonString, 200);
         }
+
     }
 
 }
