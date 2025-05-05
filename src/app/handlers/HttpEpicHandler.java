@@ -25,6 +25,7 @@ public class HttpEpicHandler extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
         try {
             String method = exchange.getRequestMethod();
 
@@ -61,6 +62,7 @@ public class HttpEpicHandler extends BaseHttpHandler {
     }
 
     private void handleDelete(HttpExchange exchange) throws IOException {
+
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
@@ -94,17 +96,20 @@ public class HttpEpicHandler extends BaseHttpHandler {
             String stringListSubtaskByEpic = jsonMapper.toJson(listSubtasksByEpic);
             sendText(exchange, stringListSubtaskByEpic, 200);
         }
+
         if (urlParts.length == 3) { // получение по id
             Integer id = Integer.valueOf(urlParts[2]);
             Epic taskById = taskManager.getEpicById(id);
             String stringJson = jsonMapper.toJson(taskById);
             sendText(exchange, stringJson, 200);
         }
+
         if (urlParts.length == 2) {//получение всех задач
             List<Epic> allEpic = taskManager.getAllEpic();
             String jsonString = jsonMapper.toJson(allEpic);
             sendText(exchange, jsonString, 200);
         }
+
     }
 
 }
