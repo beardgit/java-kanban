@@ -10,7 +10,6 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.http.HttpClient;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -23,17 +22,21 @@ public class Main {
             Gson jsonMapper = new GsonBuilder()
                     .registerTypeAdapter(Duration.class, new DurationAdapter())
                     .registerTypeAdapter(Instant.class, new InstantAdapter())
-                    .serializeNulls()
+//                    .serializeNulls()
                     .create();
 
             TaskManager manager = Managers.getDefault();
             manager.appendTask(new Task("Реализовать эндпоинты", "ABC"));
             manager.appendTask(new Task("Запустить сервер", "CDE"));
 
-            System.out.println(manager.getAllTasks());
-
             server.createContext("/tasks", new HttpTaskHandler(manager, jsonMapper));
+            server.createContext("/epics", new HttpEpicHandler(manager, jsonMapper));
+            server.createContext("/subtasks", new HttpSubtaskHandler(manager, jsonMapper));
+            server.createContext("/prioritized", new HttpPrioritizedHandler(manager, jsonMapper));
+            server.createContext("/history", new HttpHistoryHandler(jsonMapper));
+
             server.start();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
 

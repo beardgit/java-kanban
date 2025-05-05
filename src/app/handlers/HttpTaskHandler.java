@@ -1,12 +1,11 @@
 package app.handlers;
 
-import app.enumeration.TypeTask;
 import app.exception.ErrorResponse;
+import app.exception.TaskNitFoundException;
 import app.manager.TaskManager;
 import app.tasks.Task;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,7 +29,7 @@ public class HttpTaskHandler extends BaseHttpHandler {
 
             switch (method) {
                 case "GET":
-                    handeGet(exchange);
+                    handleGet(exchange);
                     break;
                 case "POST":
                     handlePost(exchange);
@@ -39,31 +38,50 @@ public class HttpTaskHandler extends BaseHttpHandler {
                     handleDelete(exchange);
                     break;
                 default:
+                    ErrorResponse errorResponse = new ErrorResponse(String.format("Обработка данного метода: %s - не предусмотрена", method), 405, exchange.getRequestURI().getPath());
+                    String errorStringJson = jsonMapper.toJson(errorResponse);
+                    sendText(exchange, errorStringJson, 405);
+                    break;
 
             }
-        } catch (Exception e) {
+        } catch (TaskNitFoundException e) {
             System.out.println("Ошибка обработки запроса " + e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
-            sendText(exchange, errorStringJson, 404);
+            sendText(exchange, errorStringJson, errorResponse.getErrorCode());
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500, exchange.getRequestURI().getPath());
+            String errorStringJson = jsonMapper.toJson(errorResponse);
+            sendText(exchange, errorStringJson, errorResponse.getErrorCode());
         } finally {
             exchange.close();
         }
 
 
-//        exchange.getResponseBody().write("Hello".getBytes(StandardCharsets.UTF_8));
-//        exchange.getResponseBody().flush();
-//        exchange.close();
-
     }
 
-    private void handleDelete(HttpExchange exchange) {
+    private void handleDelete(HttpExchange exchange) throws IOException {
+        URI requestUri = exchange.getRequestURI();
+        String path = requestUri.getPath();
+        String[] urlParts = path.split("/");
+        if (urlParts.length == 3) {
+            Integer idTask = Integer.parseInt(urlParts[2]);
+            Task removeTask = taskManager.deleteTask(idTask);
+            String jsonString = jsonMapper.toJson(removeTask);
+            sendText(exchange, String.format("Задача:\n %s \n успешно удалена", jsonString), 200);
+        }
     }
 
-    private void handlePost(HttpExchange exchange) {
+    private void handlePost(HttpExchange exchange) throws IOException {
+        byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
+        String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
+        Task appendTask = jsonMapper.fromJson(bodyString, Task.class);
+        Task task = taskManager.appendTask(appendTask);
+        String stringJson = jsonMapper.toJson(task);
+        sendText(exchange, stringJson, 201);
     }
 
-    private void handeGet(HttpExchange exchange) throws IOException {
+    private void handleGet(HttpExchange exchange) throws IOException {
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
@@ -75,11 +93,10 @@ public class HttpTaskHandler extends BaseHttpHandler {
             sendText(exchange, stringJson, 200);
         }
         if (urlParts.length == 2) {//получение всех задач
-
             List<Task> allTasks = taskManager.getAllTasks();
             String jsonString = jsonMapper.toJson(allTasks);
             sendText(exchange, jsonString, 200);
-
         }
     }
+
 }
