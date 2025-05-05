@@ -46,7 +46,6 @@ public class HttpEpicHandler extends BaseHttpHandler {
 
             }
         } catch (TaskNitFoundException e) {
-            System.out.println("Ошибка обработки запроса " + e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
             sendText(exchange, errorStringJson, errorResponse.getErrorCode());
@@ -92,9 +91,8 @@ public class HttpEpicHandler extends BaseHttpHandler {
             Integer id = Integer.valueOf(urlParts[2]);
             Epic epicById = taskManager.getEpicById(id);
             List<Subtask> listSubtasksByEpic = epicById.getListSubtasks();
-            String stringJson = jsonMapper.toJson(epicById);
             String stringListSubtaskByEpic = jsonMapper.toJson(listSubtasksByEpic);
-            sendText(exchange, String.format("%s\n %s", stringJson, stringListSubtaskByEpic), 200);
+            sendText(exchange,  stringListSubtaskByEpic, 200);
         }
         if (urlParts.length == 3) { // получение по id
             Integer id = Integer.valueOf(urlParts[2]);

@@ -97,7 +97,6 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
         }
         if (urlParts.length == 2) {//получение всех задач
             List<Subtask> allSubtask = taskManager.getAllSubtasks();
-            System.out.println(allSubtask);
             String jsonString = jsonMapper.toJson(allSubtask);
             sendText(exchange, jsonString, 200);
         }

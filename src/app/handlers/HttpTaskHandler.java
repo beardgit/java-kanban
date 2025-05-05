@@ -45,7 +45,6 @@ public class HttpTaskHandler extends BaseHttpHandler {
 
             }
         } catch (TaskNitFoundException e) {
-            System.out.println("Ошибка обработки запроса " + e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
             sendText(exchange, errorStringJson, errorResponse.getErrorCode());
