@@ -48,13 +48,12 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
             sendError(exchange, errorResponse.getErrorCode(), errorStringJson);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             System.out.println("Ошибка обработки запроса " + e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 406, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
             sendError(exchange, errorResponse.getErrorCode(), errorStringJson);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
             sendError(exchange, errorResponse.getErrorCode(), errorStringJson);

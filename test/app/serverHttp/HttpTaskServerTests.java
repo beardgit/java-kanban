@@ -1,7 +1,5 @@
 package app.serverHttp;
 
-
-import app.serverHttp.HttpTaskServer;
 import app.manager.InMemoryTaskManager;
 import app.serverHttp.handlers.BaseHttpHandler;
 import app.tasks.Task;
@@ -14,7 +12,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
