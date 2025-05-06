@@ -1,4 +1,4 @@
-package app.handlers;
+package app.serverHttp.handlers;
 
 import app.exception.ErrorResponse;
 import app.exception.TaskNotFoundException;
@@ -38,7 +38,7 @@ public class HttpTaskHandler extends BaseHttpHandler {
                 default:
                     ErrorResponse errorResponse = new ErrorResponse(String.format("Обработка данного метода: %s - не предусмотрена", method), 405, exchange.getRequestURI().getPath());
                     String errorStringJson = jsonMapper.toJson(errorResponse);
-                    sendText(exchange, errorStringJson, 405);
+                    sendError(exchange, 405, errorStringJson);
                     break;
 
             }
@@ -46,11 +46,15 @@ public class HttpTaskHandler extends BaseHttpHandler {
         } catch (TaskNotFoundException e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
-            sendText(exchange, errorStringJson, errorResponse.getErrorCode());
+            sendError(exchange, errorResponse.getErrorCode(), errorStringJson);
+        } catch (IllegalArgumentException e) {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 406, exchange.getRequestURI().getPath());
+            String errorStringJson = jsonMapper.toJson(errorResponse);
+            sendError(exchange, errorResponse.getErrorCode(), errorStringJson);
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
-            sendText(exchange, errorStringJson, errorResponse.getErrorCode());
+            sendError(exchange, errorResponse.getErrorCode(), errorStringJson);
         } finally {
             exchange.close();
         }

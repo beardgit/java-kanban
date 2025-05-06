@@ -1,4 +1,4 @@
-package app.handlers;
+package app.serverHttp.handlers;
 
 import app.adapter.DurationAdapter;
 import app.adapter.InstantAdapter;
@@ -16,7 +16,7 @@ import java.time.Instant;
 public abstract class BaseHttpHandler implements HttpHandler {
 
     //Настраиваем Gson
-     static Gson jsonMapper = new GsonBuilder()
+    static Gson jsonMapper = new GsonBuilder()
             .registerTypeAdapter(Duration.class, new DurationAdapter())
             .registerTypeAdapter(Instant.class, new InstantAdapter())
             .create();
@@ -29,9 +29,9 @@ public abstract class BaseHttpHandler implements HttpHandler {
         h.close();
     }
 
-    private void sendError(HttpExchange exchange, int code, String message) throws IOException {
-        String response = jsonMapper.toJson(new ErrorResponse(message, code, exchange.getRequestURI().getPath()));
-        sendText(exchange, response, code);
+    protected void sendError(HttpExchange exchange, int code, String message) throws IOException {
+        String responseError = jsonMapper.toJson(new ErrorResponse(message, code, exchange.getRequestURI().getPath()));
+        sendText(exchange, responseError, code);
     }
 
 }

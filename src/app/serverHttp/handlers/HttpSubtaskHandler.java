@@ -1,9 +1,8 @@
-package app.handlers;
+package app.serverHttp.handlers;
 
 import app.exception.ErrorResponse;
 import app.exception.TaskNotFoundException;
 import app.manager.TaskManager;
-import app.tasks.Epic;
 import app.tasks.Subtask;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -12,13 +11,12 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class HttpEpicHandler extends BaseHttpHandler {
+public class HttpSubtaskHandler extends BaseHttpHandler {
 
     private final TaskManager taskManager;
 
-    public HttpEpicHandler(TaskManager manager) {
+    public HttpSubtaskHandler(TaskManager manager) {
         this.taskManager = manager;
-
     }
 
     @Override
@@ -29,7 +27,7 @@ public class HttpEpicHandler extends BaseHttpHandler {
 
             switch (method) {
                 case "GET":
-                    handleGet(exchange);
+                    this.handleGet(exchange);
                     break;
                 case "POST":
                     handlePost(exchange);
@@ -40,46 +38,55 @@ public class HttpEpicHandler extends BaseHttpHandler {
                 default:
                     ErrorResponse errorResponse = new ErrorResponse(String.format("Обработка данного метода: %s - не предусмотрена", method), 405, exchange.getRequestURI().getPath());
                     String errorStringJson = jsonMapper.toJson(errorResponse);
-                    sendText(exchange, errorStringJson, 405);
+                    sendError(exchange, 405, errorStringJson);
                     break;
 
             }
 
-        } catch (TaskNotFoundException e ) {
+        } catch (TaskNotFoundException e) {
+            System.out.println("Ошибка обработки запроса " + e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
-            sendText(exchange, errorStringJson, errorResponse.getErrorCode());
-        } catch (Exception e) {
+            sendError(exchange, errorResponse.getErrorCode(), errorStringJson);
+        }catch (IllegalArgumentException e){
+            System.out.println("Ошибка обработки запроса " + e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 406, exchange.getRequestURI().getPath());
+            String errorStringJson = jsonMapper.toJson(errorResponse);
+            sendError(exchange, errorResponse.getErrorCode(), errorStringJson);
+        }
+        catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
-            sendText(exchange, errorStringJson, errorResponse.getErrorCode());
+            sendError(exchange, errorResponse.getErrorCode(), errorStringJson);
         } finally {
             exchange.close();
         }
 
-
     }
 
     private void handleDelete(HttpExchange exchange) throws IOException {
-
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
         if (urlParts.length == 3) {
-            Integer idTask = Integer.parseInt(urlParts[2]);
-            Epic removeEpic = taskManager.deleteEpic(idTask);
-            String jsonString = jsonMapper.toJson(removeEpic);
+            Integer idSubtask = Integer.parseInt(urlParts[2]);
+            Subtask removeSubtask = taskManager.deleteSubtask(idSubtask);
+            String jsonString = jsonMapper.toJson(removeSubtask);
             sendText(exchange, String.format("Задача:\n %s \n успешно удалена", jsonString), 200);
         }
-
     }
 
     private void handlePost(HttpExchange exchange) throws IOException {
         byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
         String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
-        Epic appendEpic = jsonMapper.fromJson(bodyString, Epic.class);
-        Epic epic = taskManager.appendEpic(appendEpic);
-        String stringJson = jsonMapper.toJson(epic);
+        Subtask subtask = jsonMapper.fromJson(bodyString, Subtask.class);
+
+        if (subtask.getId() == null) {
+            taskManager.appendSubtask(subtask);
+        } else {
+            taskManager.updateSubtask(subtask);
+        }
+        String stringJson = jsonMapper.toJson(subtask);
         sendText(exchange, stringJson, 201);
     }
 
@@ -88,24 +95,16 @@ public class HttpEpicHandler extends BaseHttpHandler {
         String path = requestUri.getPath();
         String[] urlParts = path.split("/");
 
-        if (urlParts.length == 4 && urlParts[3].equals("subtasks")) {
-            Integer id = Integer.valueOf(urlParts[2]);
-            Epic epicById = taskManager.getEpicById(id);
-            List<Subtask> listSubtasksByEpic = epicById.getListSubtasks();
-            String stringListSubtaskByEpic = jsonMapper.toJson(listSubtasksByEpic);
-            sendText(exchange, stringListSubtaskByEpic, 200);
-        }
-
         if (urlParts.length == 3) {
             Integer id = Integer.valueOf(urlParts[2]);
-            Epic taskById = taskManager.getEpicById(id);
-            String stringJson = jsonMapper.toJson(taskById);
+            Subtask subtaskById = taskManager.getSubtaskById(id);
+            String stringJson = jsonMapper.toJson(subtaskById);
             sendText(exchange, stringJson, 200);
         }
 
         if (urlParts.length == 2) {
-            List<Epic> allEpic = taskManager.getAllEpic();
-            String jsonString = jsonMapper.toJson(allEpic);
+            List<Subtask> allSubtask = taskManager.getAllSubtasks();
+            String jsonString = jsonMapper.toJson(allSubtask);
             sendText(exchange, jsonString, 200);
         }
 

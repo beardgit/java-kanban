@@ -1,7 +1,7 @@
-package app.server;
+package app.serverHttp;
 
-import app.handlers.*;
 import app.manager.TaskManager;
+import app.serverHttp.handlers.*;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -11,8 +11,8 @@ public class HttpTaskServer {
 
     private final String HOST_NAME;
     private final Integer PORT;
-    private HttpServer SERVER = null;
     private final TaskManager manager;
+    public HttpServer SERVER = null;
 
 
     public HttpTaskServer(String hostName, Integer port, TaskManager manager) {
@@ -25,6 +25,7 @@ public class HttpTaskServer {
     public void start() throws IOException {
         InetSocketAddress address = new InetSocketAddress(HOST_NAME, PORT);
         SERVER = HttpServer.create(address, 0);
+        SERVER.start();
         initializeContexts();
     }
 

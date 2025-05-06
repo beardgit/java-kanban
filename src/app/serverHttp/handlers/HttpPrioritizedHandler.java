@@ -1,6 +1,5 @@
-package app.handlers;
+package app.serverHttp.handlers;
 
-import app.exception.ErrorResponse;
 import app.manager.TaskManager;
 import app.tasks.Task;
 import com.sun.net.httpserver.HttpExchange;
@@ -36,9 +35,5 @@ public class HttpPrioritizedHandler extends BaseHttpHandler {
 
     }
 
-    private void sendError(HttpExchange exchange, int code, String message) throws IOException {
-        String response = jsonMapper.toJson(new ErrorResponse(message, code, exchange.getRequestURI().getPath()));
-        sendText(exchange, response, code);
-    }
 
 }
