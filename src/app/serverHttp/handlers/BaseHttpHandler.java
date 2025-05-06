@@ -16,7 +16,7 @@ import java.time.Instant;
 public abstract class BaseHttpHandler implements HttpHandler {
 
     //Настраиваем Gson
-    static Gson jsonMapper = new GsonBuilder()
+    public static Gson jsonMapper = new GsonBuilder()
             .registerTypeAdapter(Duration.class, new DurationAdapter())
             .registerTypeAdapter(Instant.class, new InstantAdapter())
             .create();
