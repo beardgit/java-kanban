@@ -16,6 +16,7 @@ public class Task {
     private Duration duration;
     private Instant startTime;
 
+
     public Task(Task task) {
         this.id = task.getId();
         this.name = task.getName();

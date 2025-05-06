@@ -1,10 +1,9 @@
 package app.handlers;
 
 import app.exception.ErrorResponse;
-import app.exception.TaskNitFoundException;
+import app.exception.TaskNotFoundException;
 import app.manager.TaskManager;
 import app.tasks.Subtask;
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -15,11 +14,9 @@ import java.util.List;
 public class HttpSubtaskHandler extends BaseHttpHandler {
 
     private final TaskManager taskManager;
-    private final Gson jsonMapper;
 
-    public HttpSubtaskHandler(TaskManager manager, Gson jsonMapper) {
+    public HttpSubtaskHandler(TaskManager manager) {
         this.taskManager = manager;
-        this.jsonMapper = jsonMapper;
     }
 
     @Override
@@ -46,7 +43,7 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
 
             }
 
-        } catch (TaskNitFoundException e) {
+        } catch (TaskNotFoundException e) {
             System.out.println("Ошибка обработки запроса " + e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
@@ -77,8 +74,14 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
         byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
         String bodyString = new String(bodyBytes, StandardCharsets.UTF_8);
         Subtask subtask = jsonMapper.fromJson(bodyString, Subtask.class);
-        if (subtask.getId() == null) taskManager.appendSubtask(subtask);
-        if (subtask.getId() != null) taskManager.updateSubtask(subtask);
+        //Пррровести проверку времени если начало одна точка
+//        тогда даю 406 ошибку ! пgetStartTime + Duration и если
+//        что бы конец задачи не заходил на новую задачу старта
+        if (subtask.getId() == null) {
+            taskManager.appendSubtask(subtask);
+        }else {
+            taskManager.updateSubtask(subtask);
+        }
         String stringJson = jsonMapper.toJson(subtask);
         sendText(exchange, stringJson, 201);
     }

@@ -1,10 +1,9 @@
 package app.handlers;
 
 import app.exception.ErrorResponse;
-import app.exception.TaskNitFoundException;
+import app.exception.TaskNotFoundException;
 import app.manager.TaskManager;
 import app.tasks.Task;
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -15,11 +14,9 @@ import java.util.List;
 public class HttpTaskHandler extends BaseHttpHandler {
 
     private final TaskManager taskManager;
-    private final Gson jsonMapper;
 
-    public HttpTaskHandler(TaskManager manager, Gson jsonMapper) {
+    public HttpTaskHandler(TaskManager manager) {
         this.taskManager = manager;
-        this.jsonMapper = jsonMapper;
     }
 
     @Override
@@ -46,7 +43,7 @@ public class HttpTaskHandler extends BaseHttpHandler {
 
             }
 
-        } catch (TaskNitFoundException e) {
+        } catch (TaskNotFoundException e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, exchange.getRequestURI().getPath());
             String errorStringJson = jsonMapper.toJson(errorResponse);
             sendText(exchange, errorStringJson, errorResponse.getErrorCode());

@@ -3,7 +3,6 @@ package app.handlers;
 import app.exception.ErrorResponse;
 import app.manager.TaskManager;
 import app.tasks.Task;
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -11,11 +10,9 @@ import java.util.List;
 
 public class HttpPrioritizedHandler extends BaseHttpHandler {
     private final TaskManager taskManager;
-    private final Gson jsonMapper;
 
-    public HttpPrioritizedHandler(TaskManager manager, Gson jsonMapper) {
+    public HttpPrioritizedHandler(TaskManager manager) {
         this.taskManager = manager;
-        this.jsonMapper = jsonMapper;
     }
 
     @Override
