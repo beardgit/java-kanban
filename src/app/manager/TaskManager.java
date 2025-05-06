@@ -51,7 +51,7 @@ public interface TaskManager {
 
     Epic deleteEpic(Integer id);
 
-    void deleteSubtask(Integer id);
+    Subtask deleteSubtask(Integer id);
 
     List<Task> getPrioritizedTasks();
 

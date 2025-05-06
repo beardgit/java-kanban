@@ -8,13 +8,14 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class Task {
+
     private Integer id;
     private String name;
     private String description;
     private StatusTasks status = StatusTasks.NEW;
-    private final TypeTask type = TypeTask.TASK;
     private Duration duration;
     private Instant startTime;
+
 
     public Task(Task task) {
         this.id = task.getId();
@@ -68,7 +69,7 @@ public class Task {
     }
 
     public TypeTask getType() {
-        return type;
+        return TypeTask.TASK;
     }
 
     public Duration getDuration() {
@@ -88,24 +89,8 @@ public class Task {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public void setStatus(StatusTasks status) {
         this.status = status;
-    }
-
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
-    public void setStartTime(Instant startTime) {
-        this.startTime = startTime;
     }
 
     @Override
@@ -129,6 +114,7 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", type=" + getType() +
                 ", startTime='" + startTime + '\'' +
                 ", duration='" + duration + '\'' +
                 ", endTime='" + getEndTime() + '\'' +

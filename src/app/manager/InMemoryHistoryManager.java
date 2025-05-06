@@ -47,7 +47,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-
     //   Блок  обработки добавления и удаления в историю
     @Override
     public void addToHistory(Task task) {
@@ -66,7 +65,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyMap.put(keyTask, newNode);
     }
 
-
     @Override
     public void removeFromHistory(Task task) {
         if (task == null) {
@@ -78,7 +76,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         removeNode(nodeTask);
 
     }
-
 
     @Override
     public List<Task> getHistory() {

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class Epic extends Task {
 
-    private final TypeTask type = TypeTask.EPIC;
+
     private final List<Subtask> listSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
@@ -81,6 +81,6 @@ public class Epic extends Task {
 
     @Override
     public TypeTask getType() {
-        return this.type;
+        return TypeTask.EPIC;
     }
 }
